@@ -1,300 +1,239 @@
 import { useState, useEffect } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { 
+  LineChart, Line, AreaChart, Area, BarChart, Bar, 
+  XAxis, YAxis, CartesianGrid, Tooltip, Legend 
+} from 'recharts';
 
-function App() {
-  const [algorithms, setAlgorithms] = useState([]);
-  const [selectedAlgo, setSelectedAlgo] = useState('');
+const ALGORITHMS_DATA = {
+  fibonacci: { id: 'fibonacci', title: 'Ֆիբոնաչի', icon: '🌀', desc: 'Ոսկե հատում vs Ռեկուրսիա', inputs: ['n'], chartType: 'line', colors: { opt: '#10b981', slow: '#ef4444' } },
+  factorial: { id: 'factorial', title: 'Ֆակտորիալ', icon: '❗', desc: 'Loop vs Recursion', inputs: ['n'], chartType: 'bar', colors: { opt: '#3b82f6', slow: '#f97316' } },
+  combinations: { id: 'combinations', title: 'Զուգորդություն', icon: '🎲', desc: 'Բանաձև vs Պասկալի եռանկյուն', inputs: ['n', 'k'], chartType: 'area', colors: { opt: '#8b5cf6', slow: '#ec4899' } },
+  sorting: { id: 'sorting', title: 'Տեսակավորում', icon: '📊', desc: 'Quick Sort vs Bubble Sort', inputs: ['n'], chartType: 'bar', colors: { opt: '#06b6d4', slow: '#f43f5e' } },
+  gcd: { id: 'gcd', title: 'ՀԱԲ (GCD)', icon: '➗', desc: 'Էվկլիդես vs Գծային որոնում', inputs: ['a', 'b'], chartType: 'line', colors: { opt: '#10b981', slow: '#f59e0b' } }
+};
+
+function AlgorithmPage({ algoInfo, onBack }) {
   const [inputs, setInputs] = useState({});
   const [results, setResults] = useState(null);
+  const [historyData, setHistoryData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [historyData, setHistoryData] = useState([]); 
-  
-  // ՆՈՐԸ. Էջանցման State
-  const [activeTab, setActiveTab] = useState('lab'); 
+  const [activeTab, setActiveTab] = useState('lab');
+  const [algoDetails, setAlgoDetails] = useState(null);
 
   useEffect(() => {
-    fetch('http://127.0.0.1:8000/api/algorithms/')
-      .then(res => res.json())
-      .then(data => {
-        setAlgorithms(data);
-        if (data.length > 0) {
-          setSelectedAlgo(data[0].slug);
-          initInputs(data[0].required_inputs);
-          fetchHistory(data[0].slug);
-        }
-      });
-  }, []);
+    const initial = {};
+    algoInfo.inputs.forEach(k => initial[k] = "");
+    setInputs(initial);
+    setResults(null);
+    fetchHistory();
+    fetchAlgoDetails();
+  }, [algoInfo.id]);
 
-  const fetchHistory = async (slug) => {
-    const res = await fetch(`http://127.0.0.1:8000/api/history/${slug}/`);
-    if (res.ok) setHistoryData(await res.json());
+  const fetchAlgoDetails = async () => {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/algorithms/`);
+      const data = await res.json();
+      setAlgoDetails(data.find(a => a.slug === algoInfo.id));
+    } catch (e) { console.error(e); }
   };
 
-  const initInputs = (reqInputs) => {
-    const obj = {};
-    reqInputs.split(',').forEach(k => obj[k.trim()] = "");
-    setInputs(obj);
-    setResults(null);
+  const fetchHistory = async () => {
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/history/${algoInfo.id}/`);
+      if (res.ok) {
+        const data = await res.json();
+        const sortedData = data.map(i => ({...i, n: parseInt(i.n)})).sort((a,b) => a.n - b.n);
+        setHistoryData(sortedData);
+      }
+    } catch (e) { console.error(e); }
   };
 
   const handleCalculate = async (customInputs = null) => {
     setIsLoading(true);
     const finalInputs = customInputs || inputs;
-    const query = new URLSearchParams({ algo: selectedAlgo, ...finalInputs }).toString();
-    const res = await fetch(`http://127.0.0.1:8000/api/combinations/?${query}`);
-    const data = await res.json();
-    if (!customInputs) setResults(data);
+    const query = new URLSearchParams({ algo: algoInfo.id, ...finalInputs }).toString();
+    try {
+      const res = await fetch(`http://127.0.0.1:8000/api/combinations/?${query}`);
+      const data = await res.json();
+      if (!customInputs) setResults(data);
+      await fetchHistory();
+    } catch (e) { console.error(e); }
     setIsLoading(false);
-    fetchHistory(selectedAlgo);
-    return data;
   };
 
   const runAutoBenchmark = async () => {
-    const limit = parseInt(inputs.n) || 20;
+    const limit = parseInt(inputs.n) || 15;
     setIsLoading(true);
+    window.stopNow = false;
     for (let i = 1; i <= limit; i++) {
-      await handleCalculate({ n: i, k: Math.floor(i / 2) });
+      if (window.stopNow) break;
+      const autoIn = { n: i };
+      if (algoInfo.inputs.includes('k')) autoIn.k = Math.floor(i / 2);
+      if (algoInfo.inputs.includes('b')) { autoIn.a = i * 10; autoIn.b = 5; }
+      await handleCalculate(autoIn);
     }
     setIsLoading(false);
-    setActiveTab('analytics'); // Բենչմարկից հետո ավտոմատ գնալ գրաֆիկների էջ
+    setActiveTab('analytics');
   };
 
-  const exportToCSV = () => {
-    const headers = ["N", "Optimal (ms)", "Recursive (ms)"];
-    const rows = historyData.map(d => [d.n, d["Օպտիմալ"], d["Ոչ Օպտիմալ"]]);
-    const csvContent = "data:text/csv;charset=utf-8," + [headers, ...rows].map(e => e.join(",")).join("\n");
-    const link = document.createElement("a");
-    link.setAttribute("href", encodeURI(csvContent));
-    link.setAttribute("download", `analysis_${selectedAlgo}.csv`);
-    link.click();
+  const renderChart = () => {
+    const width = Math.max(1000, historyData.length * 60);
+    const { opt, slow } = algoInfo.colors;
+    const props = { width, height: 400, data: historyData, margin: { top: 20, right: 50, left: 20, bottom: 20 } };
+    const Chart = algoInfo.chartType === 'bar' ? BarChart : (algoInfo.chartType === 'area' ? AreaChart : LineChart);
+    
+    return (
+      <Chart {...props}>
+        <CartesianGrid strokeDasharray="3 3" vertical={false} />
+        <XAxis dataKey="n" interval={0} stroke="#64748b" />
+        <YAxis yAxisId="left" stroke={slow} orientation="left" />
+        <YAxis yAxisId="right" stroke={opt} orientation="right" />
+        <Tooltip contentStyle={{ borderRadius: '12px', border: 'none', boxShadow: '0 4px 12px rgba(0,0,0,0.1)' }} />
+        <Legend verticalAlign="top" height={36}/>
+        {algoInfo.chartType === 'bar' ? (
+          <><Bar yAxisId="right" dataKey="Օպտիմալ" fill={opt} radius={[4, 4, 0, 0]} /><Bar yAxisId="left" dataKey="Ոչ Օպտիմալ" fill={slow} radius={[4, 4, 0, 0]} /></>
+        ) : algoInfo.chartType === 'area' ? (
+          <><Area yAxisId="right" dataKey="Օպտիմալ" fill={opt} stroke={opt} fillOpacity={0.3} /><Area yAxisId="left" dataKey="Ոչ Օպտիմալ" fill={slow} stroke={slow} fillOpacity={0.3} /></>
+        ) : (
+          <><Line yAxisId="right" type="monotone" dataKey="Օպտիմալ" stroke={opt} strokeWidth={3} dot={{ r: 4 }} /><Line yAxisId="left" type="monotone" dataKey="Ոչ Օպտիմալ" stroke={slow} strokeWidth={3} dot={{ r: 4 }} /></>
+        )}
+      </Chart>
+    );
   };
-
-  const generatePDF = () => {
-    window.print();
-  };
-
-  const safeSlug = selectedAlgo ? selectedAlgo.toLowerCase() : '';
-
-  const explanations = {
-    combinations: {
-      fast: { title: "Մաթեմատիկական Բանաձև", desc: "Օգտագործում է C(n, k) = n! / (k! * (n-k)!) հայտնի բանաձևը։ Արդյունքը ստացվում է ակնթարթորեն՝ շնորհիվ պարզ մաթեմատիկական գործողությունների (O(1))։" },
-      slow: { title: "Ռեկուրսիվ Ճյուղավորում", desc: "Փորձում է գտնել լուծումը՝ ստուգելով բոլոր հնարավոր տարբերակները մեկ առ մեկ։ Բարդությունը էքսպոնենցիալ է՝ O(2^n)։" }
-    },
-    factorial: {
-      fast: { title: "Գծային Հաշվարկ", desc: "Կիրառում է պրոցեսորի մակարդակով օպտիմիզացված ցիկլային բազմապատկում: Գործողությունն արվում է գծային ժամանակում՝ խնայելով հիշողությունը:" },
-      slow: { title: "Ռեկուրսիվ Կանչեր", desc: "Ամեն մի թվի համար բացում է հիշողության նոր բլոկ (Call Stack)։ Մեծ թվերի դեպքում այն պարզապես լցնում է համակարգչի RAM-ը:" }
-    },
-    fibonacci: {
-      fast: { title: "Բինեի Բանաձև (O(1))", desc: "Թիվը գտնվում է ակնթարթորեն՝ օգտագործելով «Ոսկե հատման» (1.618) մաթեմատիկական հաստատունը վայրկյանի միլիոներորդական մասում:" },
-      slow: { title: "Կրկնվող Ռեկուրսիա", desc: "Ամեն մի թիվ գտնելու համար համակարգիչը հետ է գնում և զրոյից հաշվում նախորդները: Հանգեցնում է ռեսուրսների ահռելի վատնման:" }
-    }
-  };
-
-  const activeExplanation = explanations[Object.keys(explanations).find(k => safeSlug.includes(k))] || explanations.combinations;
 
   return (
-    <div style={{ minHeight: '100vh', backgroundColor: '#f0f4f8', padding: '40px 20px', fontFamily: 'Inter, sans-serif' }}>
-      <style>{`
-        .panel { background: white; border-radius: 20px; padding: 30px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); margin-bottom: 30px; animation: fadeIn 0.4s ease-in-out; }
-        .btn-main { background: #4f46e5; color: white; padding: 12px 24px; border: none; border-radius: 12px; cursor: pointer; font-weight: 600; transition: 0.2s;}
-        .btn-main:hover { background: #4338ca; }
-        .btn-outline { background: white; color: #4f46e5; border: 2px solid #4f46e5; padding: 10px 20px; border-radius: 12px; cursor: pointer; font-weight: 600; margin-left: 10px; transition: 0.2s;}
-        .btn-outline:hover { background: #f8fafc; }
-        
-        /* Էջանցման դիզայն */
-        .nav-tabs { display: flex; gap: 15px; margin-bottom: 30px; border-bottom: 2px solid #e2e8f0; padding-bottom: 15px; overflow-x: auto;}
-        .nav-tab { padding: 10px 20px; font-weight: 700; color: #64748b; cursor: pointer; border-radius: 10px; transition: 0.3s; background: transparent; border: none; font-size: 16px;}
-        .nav-tab:hover { background: #e0e7ff; color: #4f46e5; }
-        .nav-tab.active { background: #4f46e5; color: white; box-shadow: 0 4px 10px rgba(79, 70, 229, 0.3); }
-
-        .explanation-card { padding: 20px; border-radius: 16px; border: 1px solid #e2e8f0; }
-        .matrix-table { width: 100%; border-collapse: collapse; margin-top: 15px; }
-        .matrix-table th, .matrix-table td { padding: 15px; text-align: left; border-bottom: 1px solid #e2e8f0; }
-        .matrix-table th { background: #f8fafc; color: #475569; font-weight: 700; text-transform: uppercase; font-size: 13px;}
-        
-        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
-
-        @media print {
-          body { background: white; padding: 0; }
-          .no-print { display: none !important; }
-          .panel { box-shadow: none; border: 1px solid #e2e8f0; break-inside: avoid; margin-bottom: 20px; padding: 15px;}
-        }
-      `}</style>
-
-      <div style={{ maxWidth: '1000px', margin: '0 auto' }}>
-        
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
-          <div>
-            <h1 style={{ margin: 0, paddingBottom:'5px', color: '#1e293b', fontWeight: 800 }}>Գիտական Լաբորատորիա 🔬</h1>
-            <p style={{ margin: '5px 0 0 0', color: '#64748b' }}>Ալգորիթմների և տվյալների կառույցների վերլուծություն</p>
-          </div>
-          <div className="no-print" style={{ display: 'flex', gap: '10px' }}>
-            <span style={{ padding: '8px 15px', background: '#dcfce7', color: '#166534', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px' }}>🟢 Core Engine: Կայուն</span>
-          </div>
+    <div className="fade-in">
+      <div style={{ display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '30px' }}>
+        <button onClick={onBack} className="btn-back">⬅️ Գլխավոր Էջ</button>
+        <div>
+          <h2 style={{ margin: 0, color: '#1e293b' }}>{algoInfo.icon} {algoInfo.title}</h2>
+          <p style={{ margin: 0, color: '#64748b', fontSize: '14px' }}>Անկախ լաբորատոր մոդուլ</p>
         </div>
-
-        {/* ՆԱՎԻԳԱՑԻՈՆ ՄԵՆՅՈՒ (TABS) */}
-        <div className="nav-tabs no-print">
-          <button className={`nav-tab ${activeTab === 'lab' ? 'active' : ''}`} onClick={() => setActiveTab('lab')}>
-            🧮 Լաբորատորիա
-          </button>
-          <button className={`nav-tab ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')}>
-            📈 Վիզուալիզացիա
-          </button>
-          <button className={`nav-tab ${activeTab === 'theory' ? 'active' : ''}`} onClick={() => setActiveTab('theory')}>
-            📚 Տեսություն
-          </button>
-        </div>
-
-        {/* ======================= ԷՋ 1: ԼԱԲՈՐԱՏՈՐԻԱ ======================= */}
-        {activeTab === 'lab' && (
-          <div>
-            <div className="panel no-print" style={{ display: 'flex', gap: '15px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
-              <div>
-                <label style={{display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '5px'}}>ԱԼԳՈՐԻԹՄ</label>
-                <select className="btn-outline" style={{margin: 0, width: '220px'}} value={selectedAlgo} onChange={(e) => {
-                  setSelectedAlgo(e.target.value);
-                  const a = algorithms.find(x => x.slug === e.target.value);
-                  if(a) initInputs(a.required_inputs);
-                }}>
-                  {algorithms.map(a => <option key={a.id} value={a.slug}>{a.title}</option>)}
-                </select>
-              </div>
-              {Object.keys(inputs).map(k => (
-                <div key={k}>
-                  <label style={{display: 'block', fontSize: '12px', fontWeight: 700, marginBottom: '5px'}}>{k.toUpperCase()}</label>
-                  <input type="number" className="btn-outline" style={{margin: 0, width: '90px'}} value={inputs[k]} onChange={(e) => setInputs({...inputs, [k]: e.target.value})} />
-                </div>
-              ))}
-              <button className="btn-main" onClick={() => handleCalculate()} disabled={isLoading}>
-                {isLoading ? '⏳ ...' : 'Հաշվել'}
-              </button>
-              <button className="btn-outline" onClick={runAutoBenchmark} disabled={isLoading}>🚀 Auto-Benchmark</button>
-            </div>
-
-            {results ? (
-              <div className="panel" style={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', textAlign: 'center', background: 'linear-gradient(135deg, #1e293b 0%, #0f172a 100%)', color: 'white' }}>
-                <div style={{ flex: 1, padding: '10px' }}><p style={{ margin: '0 0 5px 0', color: '#94a3b8', fontSize: '14px' }}>Peak Memory (RAM)</p><h2 style={{ margin: 0, color: '#38bdf8' }}>{results.memory_kb} <span style={{fontSize:'16px'}}>KB</span></h2></div>
-                <div style={{ flex: 1, padding: '10px', borderLeft: '1px solid #334155', borderRight: '1px solid #334155' }}><p style={{ margin: '0 0 5px 0', color: '#94a3b8', fontSize: '14px' }}>Ծառի Ճյուղեր</p><h2 style={{ margin: 0, color: '#f43f5e' }}>{results.steps?.toLocaleString()}</h2></div>
-                <div style={{ flex: 1, padding: '10px' }}><p style={{ margin: '0 0 5px 0', color: '#94a3b8', fontSize: '14px' }}>Վերջնական Արդյունք</p><h2 style={{ margin: 0, color: '#10b981' }}>{results.result}</h2></div>
-              </div>
-            ) : (
-              <div className="panel" style={{ textAlign: 'center', color: '#94a3b8', padding: '50px 20px' }}>
-                <span style={{ fontSize: '40px', display: 'block', marginBottom: '15px' }}>🖥️</span>
-                <h3>Տվյալներ դեռ չկան</h3>
-                <p>Մուտքագրեք արժեքներ վերևի վահանակում և սեղմեք «Հաշվել» կամ «Auto-Benchmark»:</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ======================= ԷՋ 2: ՎԻԶՈՒԱԼԻԶԱՑԻԱ ======================= */}
-        {activeTab === 'analytics' && (
-          <div className="panel">
-            <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: '20px', alignItems: 'center' }}>
-              <h3 style={{ margin: 0 }}>Ժամանակային (Տ) Բարդության Գրաֆիկ</h3>
-              <div className="no-print" style={{ display: 'flex', gap: '10px' }}>
-                <button className="btn-outline" style={{borderColor: '#64748b', color: '#475569', margin: 0}} onClick={generatePDF}>📄 Զեկույց (PDF)</button>
-                <button className="btn-outline" style={{borderColor: '#10b981', color: '#10b981', margin: 0}} onClick={exportToCSV}>📥 Տվյալներ (CSV)</button>
-              </div>
-            </div>
-            
-            {historyData.length > 0 ? (
-              <div style={{ height: '400px' }}>
-                <ResponsiveContainer width="100%" height="100%">
-                  <LineChart data={historyData}>
-                    <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#e2e8f0" />
-                    <XAxis dataKey="n" />
-                    <YAxis />
-                    <Tooltip />
-                    <Legend />
-                    <Line type="monotone" dataKey="Օպտիմալ" stroke="#10b981" strokeWidth={3} dot={false} />
-                    <Line connectNulls={false} type="monotone" dataKey="Ոչ Օպտիմալ" stroke="#ef4444" strokeWidth={3} dot={false} />
-                  </LineChart>
-                </ResponsiveContainer>
-              </div>
-            ) : (
-               <div style={{ textAlign: 'center', color: '#94a3b8', padding: '50px 20px' }}>
-                <span style={{ fontSize: '40px', display: 'block', marginBottom: '15px' }}>📊</span>
-                <p>Գրաֆիկը կկառուցվի հաշվարկներն սկսելուց հետո:</p>
-              </div>
-            )}
-          </div>
-        )}
-
-        {/* ======================= ԷՋ 3: ՏԵՍՈՒԹՅՈՒՆ ======================= */}
-        {activeTab === 'theory' && (
-          <div>
-            <div className="panel">
-              <h3 style={{ margin: '0 0 20px 0', color: '#1e293b' }}>Ճարտարապետական Վերլուծություն</h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px' }}>
-                <div className="explanation-card" style={{ background: '#f0fdf4', borderLeft: '4px solid #10b981' }}>
-                  <h4 style={{ margin: '0 0 10px 0', color: '#065f46', display: 'flex', alignItems: 'center', gap: '8px' }}><span>⚡</span> {activeExplanation.fast.title}</h4>
-                  <p style={{ margin: 0, color: '#334155', fontSize: '14px', lineHeight: '1.6' }}>{activeExplanation.fast.desc}</p>
-                </div>
-                <div className="explanation-card" style={{ background: '#fef2f2', borderLeft: '4px solid #ef4444' }}>
-                  <h4 style={{ margin: '0 0 10px 0', color: '#991b1b', display: 'flex', alignItems: 'center', gap: '8px' }}><span>🐌</span> {activeExplanation.slow.title}</h4>
-                  <p style={{ margin: 0, color: '#334155', fontSize: '14px', lineHeight: '1.6' }}>{activeExplanation.slow.desc}</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="panel">
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
-                <h3 style={{ margin: 0, color: '#1e293b' }}>Ասիմպտոտիկ Բարդության Մատրիցա (Big-O)</h3>
-                <button className="btn-outline no-print" style={{borderColor: '#64748b', color: '#475569', margin: 0}} onClick={generatePDF}>📄 Տպել</button>
-              </div>
-              <p style={{ color: '#64748b', fontSize: '14px', marginBottom: '20px' }}>Ակադեմիական տեղեկատու տարբեր ալգորիթմների տեսական սահմանների վերաբերյալ։</p>
-              <div style={{ overflowX: 'auto' }}>
-                <table className="matrix-table">
-                  <thead>
-                    <tr>
-                      <th>Ալգորիթմ</th>
-                      <th>Մեթոդ</th>
-                      <th>Ժամանակային Բարդություն</th>
-                      <th>Հիշողություն (Space)</th>
-                      <th>Արդյունավետություն</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    <tr>
-                      <td><strong>Ֆիբոնաչի</strong></td>
-                      <td>Բինեի բանաձև</td>
-                      <td style={{ color: '#10b981', fontWeight: 'bold' }}>O(1)</td>
-                      <td style={{ color: '#10b981', fontWeight: 'bold' }}>O(1)</td>
-                      <td>Գերազանց</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Ֆիբոնաչի</strong></td>
-                      <td>Ռեկուրսիա</td>
-                      <td style={{ color: '#ef4444', fontWeight: 'bold' }}>O(2^n)</td>
-                      <td style={{ color: '#f59e0b', fontWeight: 'bold' }}>O(n)</td>
-                      <td>Անընդունելի մեծ թվերի համար</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Ֆակտորիալ</strong></td>
-                      <td>Գծային ցիկլ</td>
-                      <td style={{ color: '#f59e0b', fontWeight: 'bold' }}>O(n)</td>
-                      <td style={{ color: '#10b981', fontWeight: 'bold' }}>O(1)</td>
-                      <td>Լավ</td>
-                    </tr>
-                    <tr>
-                      <td><strong>Զուգորդություն</strong></td>
-                      <td>Դինամիկ / Բանաձևային</td>
-                      <td style={{ color: '#f59e0b', fontWeight: 'bold' }}>O(n)</td>
-                      <td style={{ color: '#10b981', fontWeight: 'bold' }}>O(1)</td>
-                      <td>Լավ</td>
-                    </tr>
-                  </tbody>
-                </table>
-              </div>
-            </div>
-          </div>
-        )}
-
       </div>
+
+      <div className="grid-container" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '25px', margin: '20px 0' }}>
+        <div className="panel theory-panel">
+          <h3 style={{ borderBottom: '2px solid #f1f5f9', paddingBottom: '10px' }}>📖 Տեսական Մաս</h3>
+          <p><strong>Օպտիմալ:</strong> {algoDetails?.fast_explanation || 'Բեռնվում է...'}</p>
+          <code className="code-block">{algoDetails?.fast_formula}</code>
+          <p style={{ marginTop: '15px' }}><strong>Ոչ օպտիմալ:</strong> {algoDetails?.slow_explanation}</p>
+          <code className="code-block" style={{background: '#fff1f2', color: '#be123c'}}>{algoDetails?.slow_formula}</code>
+        </div>
+        <div className="panel steps-panel" style={{ background: '#1e293b', color: '#f8fafc' }}>
+          <h3 style={{ color: '#38bdf8', borderBottom: '1px solid #334155', paddingBottom: '10px' }}>🔢 Հաշվարկի Քայլերը (N={results?.n || '?'})</h3>
+          <div style={{ maxHeight: '200px', overflowY: 'auto', fontSize: '14px', fontFamily: 'Fira Code, monospace' }}>
+            {results?.steps?.map((s, i) => (
+              <div key={i} style={{borderLeft: '2px solid #38bdf8', paddingLeft: '15px', marginBottom: '8px', color: '#cbd5e1'}}>
+                {s}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="nav-tabs">
+        <button className={`nav-tab ${activeTab === 'lab' ? 'active' : ''}`} onClick={() => setActiveTab('lab')}>🧮 Լաբորատորիա</button>
+        <button className={`nav-tab ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')}>📈 Անալիզ և Գրաֆիկ</button>
+      </div>
+
+      {activeTab === 'lab' && (
+        <div className="panel">
+          <div style={{ display: 'flex', gap: '15px', marginBottom: '25px', alignItems: 'flex-end', flexWrap: 'wrap' }}>
+            {algoInfo.inputs.map(k => (
+              <div key={k}>
+                <label style={{ display: 'block', fontSize: '11px', fontWeight: 800, color: '#64748b', marginBottom: '5px' }}>{k.toUpperCase()} ԱՐԺԵՔ</label>
+                <input type="number" className="input-box" placeholder={k} value={inputs[k]} onChange={e => setInputs({...inputs, [k]: e.target.value})} />
+              </div>
+            ))}
+            {!isLoading ? (
+              <>
+                <button className="btn-main" onClick={() => handleCalculate()}>⚡ Հաշվել</button>
+                <button className="btn-outline" onClick={runAutoBenchmark}>🚀 Ավտո-Բենչմարկ</button>
+              </>
+            ) : (
+              <button className="btn-main stop-btn" onClick={() => window.stopNow = true}>🛑 Կանգնեցնել</button>
+            )}
+          </div>
+          {results && (
+            <div style={{ display: 'flex', background: '#1e293b', color: 'white', padding: '25px', borderRadius: '16px', textAlign: 'center', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}>
+              <div style={{flex: 1}}><span style={{color: '#94a3b8', fontSize: '12px', display: 'block'}}>ՀԻՇՈՂՈՒԹՅՈՒՆ</span><h3 style={{margin: '5px 0 0 0'}}>{results.memory_kb} KB</h3></div>
+              <div style={{flex: 1, borderLeft: '1px solid #334155', borderRight: '1px solid #334155'}}><span style={{color: '#94a3b8', fontSize: '12px', display: 'block'}}>ԺԱՄԱՆԱԿ (ԱՐԱԳ)</span><h3 style={{margin: '5px 0 0 0', color: algoInfo.colors.opt}}>{results.time_fast_ms} ms</h3></div>
+              <div style={{flex: 1}}><span style={{color: '#94a3b8', fontSize: '12px', display: 'block'}}>ԱՐԴՅՈՒՆՔ</span><h3 style={{margin: '5px 0 0 0'}}>{results.result}</h3></div>
+            </div>
+          )}
+        </div>
+      )}
+
+      {activeTab === 'analytics' && (
+        <div className="panel">
+          <h3 style={{ marginBottom: '20px', color: '#1e293b' }}>Անալիտիկ Վիզուալիզացիա</h3>
+          <div style={{ width: '100%', overflowX: 'auto', borderRadius: '12px', border: '1px solid #e2e8f0' }}>
+            <div style={{ width: 'max-content', padding: '10px' }}>{renderChart()}</div>
+          </div>
+          <p style={{ fontSize: '13px', color: '#94a3b8', marginTop: '15px', fontStyle: 'italic' }}>* Յուրաքանչյուր կետ ներկայացնում է հաշվարկի ժամանակը տվյալ N-ի դեպքում:</p>
+        </div>
+      )}
     </div>
   );
 }
 
+function App() {
+  const [view, setView] = useState('home');
+
+  return (
+    <div style={{ minHeight: '100vh', backgroundColor: '#f8fafc', padding: '40px 20px', fontFamily: 'Inter, sans-serif' }}>
+      <style>{`
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .panel { background: white; padding: 30px; border-radius: 24px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.06); border: 1px solid #f1f5f9; }
+        
+        .btn-main { background: #4f46e5; color: white; padding: 12px 28px; border-radius: 14px; border: none; cursor: pointer; font-weight: 700; transition: all 0.2s; box-shadow: 0 4px 14px 0 rgba(79, 70, 229, 0.39); }
+        .btn-main:hover { background: #4338ca; transform: translateY(-2px); box-shadow: 0 6px 20px rgba(79, 70, 229, 0.23); }
+        .btn-main:active { transform: translateY(0); }
+        
+        .btn-outline { background: white; color: #4f46e5; border: 2px solid #e2e8f0; padding: 10px 24px; border-radius: 14px; cursor: pointer; font-weight: 700; transition: all 0.2s; }
+        .btn-outline:hover { border-color: #4f46e5; background: #f5f3ff; }
+        
+        .btn-back { background: #f1f5f9; color: #475569; padding: 10px 20px; border-radius: 12px; border: none; cursor: pointer; font-weight: 700; transition: 0.2s; }
+        .btn-back:hover { background: #e2e8f0; color: #1e293b; }
+        
+        .stop-btn { background: #ef4444 !important; box-shadow: 0 4px 14px 0 rgba(239, 68, 68, 0.39) !important; }
+        .stop-btn:hover { background: #dc2626 !important; }
+
+        .input-box { width: 100px; padding: 12px; border-radius: 12px; border: 2px solid #e2e8f0; outline: none; transition: 0.2s; font-weight: 700; color: #1e293b; }
+        .input-box:focus { border-color: #4f46e5; box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.1); }
+        
+        .code-block { display: block; background: #f8fafc; padding: 12px; border-radius: 10px; font-family: 'Fira Code', monospace; font-size: 14px; margin: 10px 0; border: 1px solid #e2e8f0; color: #334155; }
+        
+        .nav-tabs { display: flex; gap: 12px; margin-bottom: 20px; }
+        .nav-tab { padding: 12px 24px; font-weight: 700; color: #64748b; cursor: pointer; border: none; background: #f1f5f9; border-radius: 14px; transition: 0.3s; }
+        .nav-tab.active { background: #4f46e5; color: white; box-shadow: 0 10px 15px -3px rgba(79, 70, 229, 0.3); }
+
+        .algo-card { background: white; padding: 30px; border-radius: 28px; border: 1px solid #f1f5f9; cursor: pointer; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1); box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05); }
+        .algo-card:hover { transform: translateY(-8px); border-color: #4f46e5; box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1); }
+      `}</style>
+
+      <div style={{ maxWidth: '1100px', margin: '0 auto' }}>
+        <header style={{ marginBottom: '50px', textAlign: 'center' }}>
+          <h1 style={{ color: '#1e293b', fontWeight: 900, fontSize: '38px', letterSpacing: '-1px', margin: '0 0 10px 0' }}>Գիտական Լաբորատորիա 🔬</h1>
+          <p style={{ color: '#64748b', fontSize: '18px' }}>Ալգորիթմների և տվյալների կառույցների վերլուծության հարթակ</p>
+        </header>
+
+        {view === 'home' ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '25px' }} className="fade-in">
+            {Object.values(ALGORITHMS_DATA).map(a => (
+              <div key={a.id} className="algo-card" onClick={() => setView(a.id)}>
+                <div style={{ fontSize: '45px', marginBottom: '20px', background: '#f5f3ff', width: '80px', height: '80px', display: 'flex', alignItems: 'center', justifyContent: 'center', borderRadius: '20px' }}>{a.icon}</div>
+                <h3 style={{ margin: '0 0 12px 0', fontSize: '22px', color: '#1e293b' }}>{a.title}</h3>
+                <p style={{ color: '#64748b', lineHeight: '1.6', fontSize: '15px' }}>{a.desc}</p>
+                <div style={{ marginTop: '20px', color: '#4f46e5', fontWeight: 800, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '5px' }}>ՄՏՆԵԼ ՄՈԴՈՒԼ ➔</div>
+              </div>
+            ))}
+          </div>
+        ) : <AlgorithmPage algoInfo={ALGORITHMS_DATA[view]} onBack={() => setView('home')} />}
+      </div>
+    </div>
+  );
+}
 export default App;

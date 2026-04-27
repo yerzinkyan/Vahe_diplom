@@ -2,8 +2,13 @@ from django.http import JsonResponse
 from .models import CalculationHistory, Algorithm
 from .math_logic import run_calculation # Նոր ֆունկցիայի անունը
 
+# views.py-ի մեջ ուղղիր այս ֆունկցիան
 def get_algorithms(request):
-    algorithms = list(Algorithm.objects.values('id', 'title', 'slug', 'fast_method_name', 'slow_method_name', 'required_inputs'))
+    algorithms = list(Algorithm.objects.values(
+        'id', 'title', 'slug', 'fast_method_name', 'slow_method_name', 
+        'required_inputs', 'fast_explanation', 'fast_formula', 
+        'slow_explanation', 'slow_formula' # Ավելացրինք այս դաշտերը
+    ))
     return JsonResponse(algorithms, safe=False)
 
 def combinations_api(request):
@@ -47,17 +52,21 @@ def get_algorithm_history(request, slug):
     data = []
     for record in history_records:
         n_val = record.input_data.get('n')
-        # Վերցնում ենք միայն այն հաշվարկները, որոնք ունեն N արժեք և ավարտվել են հաջողությամբ
-        if n_val is not None and record.time_slow_ms is not None and record.time_slow_ms > 0:
+        
+        # Վերցնում ենք բոլոր հաշվարկները, որոնք ունեն N արժեք
+        if n_val is not None:
             data.append({
                 "n": int(n_val),
                 "Օպտիմալ": record.time_fast_ms,
-                "Ոչ Օպտիմալ": record.time_slow_ms
+                # Եթե դանդաղը 0 է կամ None (այսինքն չի հաշվարկվել), ուղարկում ենք None, որ գրաֆիկը չխառնվի
+                "Ոչ Օպտիմալ": record.time_slow_ms if record.time_slow_ms and record.time_slow_ms > 0 else None
             })
             
-    # Դասավորում ենք ըստ N-ի մեծացման, որ գրաֆիկը ձախից աջ ճիշտ գնա
+    # Դասավորում ենք ըստ N-ի մեծացման
     data = sorted(data, key=lambda x: x['n'])
     
-    # Որպեսզի գրաֆիկը շատ չխճճվի, վերցնում ենք վերջին 20 եզակի կետերը
+    # Մաքրում ենք կրկնվող N-երը (եթե նույն N-ը մի քանի անգամ է հաշվարկվել)
     unique_data = {item['n']: item for item in data}.values()
-    return JsonResponse(list(unique_data)[-20:], safe=False)
+    
+    # ՈՒՂՂՈՒՄ. Հեռացրել ենք [-20:] սահմանափակումը, որպեսզի բոլոր տվյալները ուղարկվեն
+    return JsonResponse(list(unique_data), safe=False)
