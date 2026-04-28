@@ -3,7 +3,6 @@ import math
 import tracemalloc 
 import random
 
-# --- Դանդաղ մեթոդներ (Ռեկուրսիվ և Իտերատիվ) ---
 def slow_combinations(n, k, counter):
     counter[0] += 1
     if k == 0 or k == n: return 1
@@ -36,7 +35,6 @@ def slow_gcd(a, b, counter):
             return i
     return 1
 
-# --- Քայլերի գեներացման ֆունկցիաներ ---
 def get_fib_steps(n):
     steps = ["Start: F(0)=0, F(1)=1"]
     a, b = 0, 1
@@ -69,7 +67,6 @@ def get_gcd_steps(a, b):
     steps.append(f"Result: {a}")
     return steps
 
-# --- Հիմնական Հաշվարկային Մոդուլ ---
 def run_calculation(slug, input_data):
     try:
         n = int(input_data.get('n', 0))
@@ -130,7 +127,12 @@ def run_calculation(slug, input_data):
         t_start = time.perf_counter()
         res_data["result"] = math.comb(n, k) if hasattr(math, 'comb') else 0
         res_data["t_fast"] = (time.perf_counter() - t_start) * 1000
-        res_data["steps"] = ["Using multiplicative formula"]
+        res_data["steps"] = [
+            f"Բանաձև: C({n}, {k}) = {n}! / ({k}! * ({n}-{k})!)",
+            f"Հաշվարկվում է համարիչը: {n}! = {math.factorial(n)}",
+            f"Հաշվարկվում է հայտարարը: {k}! * {n-k}! = {math.factorial(k) * math.factorial(n-k)}",
+            f"Վերջնական հաշվարկ: {math.factorial(n)} / {math.factorial(k) * math.factorial(n-k)}"
+        ]
         if n <= 22:
             t_start = time.perf_counter()
             slow_combinations(n, k, counter)

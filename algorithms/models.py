@@ -8,7 +8,6 @@ class Algorithm(models.Model):
     fast_method_name = models.CharField(max_length=150)
     slow_method_name = models.CharField(max_length=150)
 
-    # ՆՈՐ ԴԱՇՏԵՐ. Բանաձևերի և բացատրությունների համար
     fast_formula = models.CharField(max_length=255, default="", blank=True, verbose_name="Արագի բանաձև")
     fast_explanation = models.TextField(default="", blank=True, verbose_name="Արագի բացատրություն")
     
