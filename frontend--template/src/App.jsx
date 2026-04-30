@@ -3,14 +3,52 @@ import {
   LineChart, Line, AreaChart, Area, BarChart, Bar, 
   XAxis, YAxis, CartesianGrid, Tooltip, Legend 
 } from 'recharts';
+import { generateRandomChallenge } from './challengeBank';
 import './visual.css';
 
 const ALGORITHMS_DATA = {
-  fibonacci: { id: 'fibonacci', title: 'Ֆիբոնաչի', icon: '🌀', desc: 'Ոսկե հատում vs Ռեկուրսիա', inputs: ['n'], chartType: 'line', colors: { opt: '#10b981', slow: '#ef4444' }, complexity: { fast: 'O(1)', slow: 'O(2ⁿ)' } },
-  factorial: { id: 'factorial', title: 'Ֆակտորիալ', icon: '❗', desc: 'Loop vs Recursion', inputs: ['n'], chartType: 'bar', colors: { opt: '#3b82f6', slow: '#f97316' }, complexity: { fast: 'O(n)', slow: 'O(n)' } },
-  combinations: { id: 'combinations', title: 'Զուգորդություն', icon: '🎲', desc: 'Բանաձև vs Պասկալի եռանկյուն', inputs: ['n', 'k'], chartType: 'area', colors: { opt: '#8b5cf6', slow: '#ec4899' }, complexity: { fast: 'O(k)', slow: 'O(2ⁿ)' } },
-  sorting: { id: 'sorting', title: 'Տեսակավորում', icon: '📊', desc: 'Quick Sort vs Bubble Sort', inputs: ['n'], chartType: 'bar', colors: { opt: '#06b6d4', slow: '#f43f5e' }, complexity: { fast: 'O(n log n)', slow: 'O(n²)' } },
-  gcd: { id: 'gcd', title: 'ՀԱԲ (GCD)', icon: '➗', desc: 'Էվկլիդես vs Գծային որոնում', inputs: ['a', 'b'], chartType: 'line', colors: { opt: '#10b981', slow: '#f59e0b' }, complexity: { fast: 'O(log n)', slow: 'O(n)' } }
+  fibonacci: { 
+    id: 'fibonacci', title: 'Ֆիբոնաչի', icon: '🌀', desc: 'Ոսկե հատում vs Ռեկուրսիա', inputs: ['n'], chartType: 'line', colors: { opt: '#10b981', slow: '#ef4444' }, complexity: { fast: 'O(1)', slow: 'O(2ⁿ)' },
+    scenarios: [
+      { title: '🐇 Ճագարների Պոպուլյացիա', n: 12, desc: 'Հաշվել ճագարների զույգերի քանակը 1 տարի (12 ամիս) անց իդեալական պայմաններում:' }, 
+      { title: '🌻 Բույսի Մոդելավորում', n: 30, desc: 'Հաշվել արևածաղկի պարույրների կամ տերևների դասավորության պաթերնը (Ֆիլոտաքսիս):' }
+    ]
+  },
+  factorial: { 
+    id: 'factorial', title: 'Ֆակտորիալ', icon: '❗', desc: 'Loop vs Recursion', inputs: ['n'], chartType: 'bar', colors: { opt: '#3b82f6', slow: '#f97316' }, complexity: { fast: 'O(n)', slow: 'O(n)' },
+    scenarios: [
+      { title: '🪑 Սեղանի Շուրջ', n: 10, desc: 'Հաշվել 10 հյուրերի՝ կլոր սեղանի շուրջ նստելու հնարավոր բոլոր տարբերակները:' }, 
+      { title: '🔐 Գաղտնաբառի Կոտրում', n: 13, desc: 'Գտնել 13 եզակի նիշերից բաղկացած գաղտնաբառի բոլոր (Brute-force) կոմբինացիաները:' }
+    ]
+  },
+  combinations: { 
+    id: 'combinations', title: 'Զուգորդություն', icon: '🎲', desc: 'Բանաձև vs Պասկալի եռանկյուն', inputs: ['n', 'k'], chartType: 'area', colors: { opt: '#8b5cf6', slow: '#ec4899' }, complexity: { fast: 'O(k)', slow: 'O(2ⁿ)' },
+    scenarios: [
+      { title: '🎰 Լոտո (6 36-ից)', n: 36, k: 6, desc: 'Ջեքփոթ շահելու հնարավոր կոմբինացիաների քանակը 36 գնդակներից բաղկացած լոտոյում:' }, 
+      { title: '👥 Աշխատանքային Թիմ', n: 20, k: 5, desc: '20 աշխատակցից 5 հոգանոց պրոյեկտային էլիտար թիմի ձևավորման տարբերակները:' }
+    ]
+  },
+  sorting: { 
+    id: 'sorting', title: 'Տեսակավորում', icon: '📊', desc: 'Quick Sort vs Bubble Sort', inputs: ['n'], chartType: 'bar', colors: { opt: '#06b6d4', slow: '#f43f5e' }, complexity: { fast: 'O(n log n)', slow: 'O(n²)' },
+    scenarios: [
+      { title: '📝 Դպրոցի Մատյան', n: 30, desc: 'Դասարանի 30 աշակերտների գնահատականների տեսակավորումը մատյանում:' }, 
+      { title: '🛒 Amazon-ի Ապրանքներ', n: 1000, desc: 'Համակարգչային բազայից 1000 ապրանքի արագ տեսակավորում ըստ գնի աճման հերթականության:' }
+    ]
+  },
+  gcd: { 
+    id: 'gcd', title: 'ՀԱԲ (GCD)', icon: '➗', desc: 'Էվկլիդես vs Գծային որոնում', inputs: ['a', 'b'], chartType: 'line', colors: { opt: '#10b981', slow: '#f59e0b' }, complexity: { fast: 'O(log n)', slow: 'O(n)' },
+    scenarios: [
+      { title: '🏞️ Հողամասի Բաժանում', a: 1050, b: 400, desc: '1050x400 մետր հողամասը բաժանել ամենամեծ հնարավոր հավասար քառակուսիների:' }, 
+      { title: '📺 Էկրանի Form Factor', a: 1920, b: 1080, desc: '1920x1080 (FHD) էկրանի կողմերի հարաբերակցության ավտոմատ կրճատում (օրինակ՝ 16:9):' }
+    ]
+  },
+  string_search: { 
+    id: 'string_search', title: 'Տեքստի Որոնում', icon: '🔍', desc: 'KMP vs Պարզ որոնում', inputs: ['n'], chartType: 'area', colors: { opt: '#8b5cf6', slow: '#ec4899' }, complexity: { fast: 'O(N+M)', slow: 'O(N×M)' },
+    scenarios: [
+      { title: '📄 Փնտրել Հոդվածում', n: 2000, desc: 'Ctrl+F գործիքով կոնկրետ բառի կամ նախադասության որոնում 2000 նիշանոց հոդվածում:' }, 
+      { title: '🧬 ԴՆԹ Մուտացիա', n: 15000, desc: 'Գտնել վիրուսի գենոմի շղթան շատ ավելի մեծ ԴՆԹ-ի հաջորդականության տվյալների բազայում:' }
+    ]
+  }
 };
 
 
@@ -55,9 +93,7 @@ function ProgressBar({ progress, color, dark }) {
 }
 
 function AlgorithmPage({ algoInfo, onBack, dark }) {
-  const [inputs, setInputs] = useState(
-    Object.fromEntries(algoInfo.inputs.map(k => [k, '']))
-  );
+  const [inputs, setInputs] = useState(Object.fromEntries(algoInfo.inputs.map(k => [k, ''])));
   const [results, setResults] = useState(null);
   const [historyData, setHistoryData] = useState([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -65,6 +101,11 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
   const [algoDetails, setAlgoDetails] = useState(null);
   const [benchmarkProgress, setBenchmarkProgress] = useState(0);
   const [benchmarkTotal, setBenchmarkTotal] = useState(0);
+  
+  const [activeScenario, setActiveScenario] = useState(null);
+  const [challenge, setChallenge] = useState(null);
+  const [userAnswer, setUserAnswer] = useState('');
+  const [challengeStatus, setChallengeStatus] = useState(null);
 
   const panel = { background: dark ? '#1e293b' : 'white', color: dark ? '#f1f5f9' : '#1e293b', border: dark ? '1px solid #334155' : '1px solid #f1f5f9' };
   const subtext = { color: dark ? '#94a3b8' : '#64748b' };
@@ -74,6 +115,9 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
     algoInfo.inputs.forEach(k => initial[k] = "");
     setInputs(initial);
     setResults(null);
+    setActiveScenario(null);
+    setChallenge(null);
+    if(activeTab === 'exam') setActiveTab('lab');
     fetchHistory();
     fetchAlgoDetails();
   }, [algoInfo.id]);
@@ -111,22 +155,57 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
   };
 
   const runAutoBenchmark = async () => {
-    const limit = parseInt(inputs.n) || 15;
-    setBenchmarkTotal(limit);
-    setBenchmarkProgress(0);
     setIsLoading(true);
     window.stopNow = false;
-    for (let i = 1; i <= limit; i++) {
+
+    let testValues = [];
+    if (algoInfo.id === 'string_search') {
+      testValues = [1000, 3000, 5000, 7000, 9000, 11000, 13000, 15000];
+    } else {
+      const limit = parseInt(inputs.n) || 15;
+      const maxLimit = Math.min(limit, 30);
+      for (let i = 1; i <= maxLimit; i++) testValues.push(i);
+    }
+
+    setBenchmarkTotal(testValues.length);
+    setBenchmarkProgress(0);
+    for (let i = 0; i < testValues.length; i++) {
       if (window.stopNow) break;
-      const autoIn = { n: i };
-      if (algoInfo.inputs.includes('k')) autoIn.k = Math.floor(i / 2);
-      if (algoInfo.inputs.includes('b')) { autoIn.a = i * 10; autoIn.b = 5; }
+      let val = testValues[i];
+      let autoIn = { n: val };
+
+      if (algoInfo.inputs.includes('k')) autoIn.k = Math.floor(val / 2);
+      if (algoInfo.inputs.includes('b')) { autoIn.a = val * 10; autoIn.b = 5; }
+
       await handleCalculate(autoIn);
-      setBenchmarkProgress(i);
+      setBenchmarkProgress(i + 1);
     }
     setIsLoading(false);
     setBenchmarkProgress(0);
     setActiveTab('analytics');
+  };
+
+  const generateChallenge = () => {
+    setUserAnswer('');
+    setChallengeStatus(null);
+    const newChallenge = generateRandomChallenge(algoInfo.id);
+    setChallenge(newChallenge);
+  };
+
+  const exportToCSV = () => {
+    if (historyData.length === 0) return;
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "N,Time_Fast_ms,Time_Slow_ms,Memory_KB\n";
+    historyData.forEach(row => {
+      csvContent += `${row.n},${row.time_fast_ms},${row.time_slow_ms || ''},${row.memory_kb || ''}\n`;
+    });
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `benchmark_${algoInfo.id}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
   };
 
   const isSafetyLimitExceeded = () => {
@@ -187,6 +266,12 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
             slowColor={algoInfo.colors.slow}
           />
         </div>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '15px' }}>
+            <h4 style={{ margin: 0, color: dark ? '#f1f5f9' : '#1e293b', fontSize: '18px' }}>Վերջին հաշվարկների ամփոփում</h4>
+            <button onClick={exportToCSV} style={{ background: '#10b981', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold', boxShadow: '0 2px 4px rgba(0,0,0,0.1)' }}>
+              📥 Ներբեռնել որպես CSV
+            </button>
+          </div>
       </div>
 
       <div className="grid-container">
@@ -213,10 +298,48 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
       <div className="nav-tabs">
         <button className={`nav-tab ${activeTab === 'lab' ? 'active' : ''}`} onClick={() => setActiveTab('lab')} style={activeTab !== 'lab' && dark ? {background: '#334155', color: '#94a3b8'} : {}}>🧮 Լաբորատորիա</button>
         <button className={`nav-tab ${activeTab === 'analytics' ? 'active' : ''}`} onClick={() => setActiveTab('analytics')} style={activeTab !== 'analytics' && dark ? {background: '#334155', color: '#94a3b8'} : {}}>📈 Անալիզ և Գրաֆիկ</button>
+        <button className={`nav-tab ${activeTab === 'exam' ? 'active' : ''}`} onClick={() => {setActiveTab('exam'); generateChallenge();}} style={activeTab !== 'exam' && dark ? {background: '#334155', color: '#94a3b8'} : {}}>🎓 Քննական Ռեժիմ</button>
       </div>
 
       {activeTab === 'lab' && (
         <div className="panel" style={panel}>
+          
+          {/* ՍԵԿՑԻԱ - ՍՑԵՆԱՐՆԵՐ */}
+          {algoInfo.scenarios && (
+            <div style={{ marginBottom: '25px' }}>
+              <h4 style={{ fontSize: '11px', fontWeight: 800, color: subtext.color, marginBottom: '10px', textTransform: 'uppercase', letterSpacing: '1px' }}>🌍 Իրական Կյանքի Սցենարներ</h4>
+              <div style={{ display: 'flex', gap: '10px', flexWrap: 'wrap' }}>
+                {algoInfo.scenarios.map((sc, idx) => {
+                  const isActive = activeScenario?.title === sc.title;
+                  return (
+                    <button key={idx} onClick={() => {
+                      setActiveScenario(sc);
+                      let newInputs = { ...inputs };
+                      if (sc.n !== undefined) newInputs.n = sc.n.toString();
+                      if (sc.k !== undefined) newInputs.k = sc.k.toString();
+                      if (sc.a !== undefined) newInputs.a = sc.a.toString();
+                      if (sc.b !== undefined) newInputs.b = sc.b.toString();
+                      setInputs(newInputs);
+                    }} 
+                    style={{ 
+                      background: isActive ? algoInfo.colors.opt : (dark ? '#1e293b' : '#f1f5f9'), 
+                      color: isActive ? 'white' : (dark ? '#f1f5f9' : '#334155'), 
+                      border: `1px solid ${isActive ? algoInfo.colors.opt : (dark ? '#334155' : '#e2e8f0')}`, 
+                      padding: '8px 16px', borderRadius: '10px', cursor: 'pointer', fontSize: '13px', fontWeight: 700, transition: '0.2s' 
+                    }}>
+                      {sc.title}
+                    </button>
+                  )
+                })}
+              </div>
+              {activeScenario && (
+                <div className="fade-in" style={{ marginTop: '12px', padding: '12px 16px', background: dark ? '#0f172a' : '#f8fafc', borderLeft: `4px solid ${algoInfo.colors.opt}`, borderRadius: '0 8px 8px 0', fontSize: '13px', color: dark ? '#cbd5e1' : '#475569', lineHeight: '1.5' }}>
+                  <strong style={{ color: dark ? '#f1f5f9' : '#1e293b' }}>Խնդրի նկարագրություն.</strong> {activeScenario.desc}
+                </div>
+              )}
+            </div>
+          )}
+
           <div className="lab-inputs-row">
             {algoInfo.inputs.map(k => (
               <div key={k}>
@@ -258,7 +381,7 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
                 </div>
                 <div className="result-col" style={{borderLeft: '1px solid #334155', borderRight: '1px solid #334155'}}>
                   <span className="result-label-static" style={{color: '#94a3b8'}}>ԺԱՄԱՆԱԿ (ԱՐԱԳ)</span>
-                  <h3 className="result-h3" style={{color: algoInfo.colors.opt}}>{results.time_fast_ms} ms</h3>
+                  <h3 className="result-h3" style={{color: algoInfo.colors.opt}}>{Number(results.time_fast_ms).toFixed(4)} ms</h3>
                 </div>
                 <div className="result-col">
                   <span className="result-label-static" style={{color: '#94a3b8'}}>ԱՐԴՅՈՒՆՔ</span>
@@ -278,6 +401,75 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
             <div style={{ width: 'max-content', padding: '10px' }}>{renderChart()}</div>
           </div>
           <p className="chart-note" style={subtext}>* Յուրաքանչյուր կետ ներկայացնում է հաշվարկի ժամանակը տվյալ N-ի դեպքում:</p>
+        </div>
+      )}
+
+      {/* ՍԵԿՑԻԱ - ՔՆՆԱԿԱՆ ՌԵԺԻՄ */}
+      {activeTab === 'exam' && (
+        <div className="panel fade-in" style={{...panel, textAlign: 'center', padding: '40px 20px'}}>
+          <h2 style={{color: algoInfo.colors.opt, fontSize: '24px', marginBottom: '10px'}}>Պրակտիկ Խնդիր</h2>
+          <div style={{fontSize: '14px', fontWeight: 'bold', marginBottom: '15px', color: subtext.color}}>{challenge?.level}</div>
+          <p style={{color: subtext.color, fontSize: '16px', maxWidth: '600px', margin: '0 auto 30px', lineHeight: '1.6'}}>
+            {challenge?.question}
+          </p>
+
+          {challenge?.correctAnswer !== null ? (
+            <div style={{display: 'flex', justifyContent: 'center', gap: '15px', alignItems: 'center', flexWrap: 'wrap'}}>
+              <input 
+                type="number" 
+                placeholder="Քո պատասխանը..." 
+                value={userAnswer}
+                onChange={(e) => setUserAnswer(e.target.value)}
+                style={{padding: '12px 20px', fontSize: '18px', borderRadius: '12px', border: `2px solid ${algoInfo.colors.opt}`, outline: 'none', width: '200px', background: dark ? '#0f172a' : 'white', color: dark ? '#f1f5f9' : '#1e293b'}}
+              />
+              <button 
+                className="btn-main"
+                onClick={() => {
+                  if (parseInt(userAnswer) === challenge.correctAnswer) setChallengeStatus('correct');
+                  else setChallengeStatus('wrong');
+                }}
+                style={{background: algoInfo.colors.opt, boxShadow: `0 4px 15px ${algoInfo.colors.opt}66`}}
+              >
+                ✔️ Ստուգել
+              </button>
+              <button className="btn-outline" onClick={generateChallenge} style={{borderColor: '#94a3b8', color: '#64748b'}}>
+                🔄 Ուրիշ խնդիր
+              </button>
+            </div>
+          ) : (
+             <button className="btn-outline" onClick={() => setActiveTab('lab')}>Վերադառնալ Լաբորատորիա</button>
+          )}
+
+          {challengeStatus === 'correct' && (
+            <div className="fade-in" style={{marginTop: '30px', padding: '20px', background: '#ecfdf5', border: '2px solid #10b981', borderRadius: '16px', color: '#047857', maxWidth: '600px', margin: '30px auto 0'}}>
+              <h3 style={{margin: '0 0 10px 0'}}>🎉 Կեցցե՜ս, ճշգրիտ է:</h3>
+              <p style={{margin: 0}}>Դու գտար ճիշտ պատասխանը ({challenge.correctAnswer}): Շարունակիր նույն ոգով:</p>
+            </div>
+          )}
+
+          {challengeStatus === 'wrong' && (
+            <div className="fade-in" style={{marginTop: '30px', padding: '20px', background: '#fef2f2', border: '2px solid #ef4444', borderRadius: '16px', color: '#b91c1c', maxWidth: '600px', margin: '30px auto 0'}}>
+              <h3 style={{margin: '0 0 10px 0'}}>❌ Ավաղ, սխալ է:</h3>
+              <p style={{margin: 0, marginBottom: '15px'}}>Ճիշտ պատասխանն էր՝ <strong>{challenge.correctAnswer}</strong>:</p>
+              <button 
+                onClick={() => {
+                  let testInputs = { ...inputs };
+                  // Վերածում ենք տեքստի (string), որպեսզի React-ի input-ները ճիշտ ցույց տան
+                  if (challenge.n !== undefined) testInputs.n = challenge.n.toString();
+                  if (challenge.k !== undefined) testInputs.k = challenge.k.toString();
+                  if (challenge.a !== undefined) testInputs.a = challenge.a.toString();
+                  if (challenge.b !== undefined) testInputs.b = challenge.b.toString();
+                  
+                  setInputs(testInputs); // Լցնում ենք input դաշտերը
+                  setActiveTab('lab');   // Գնում ենք Լաբորատորիա
+                  setTimeout(() => handleCalculate(testInputs), 300); // 300 միլիվայրկյան հետո հաշվում ենք
+                }}
+                style={{background: '#ef4444', color: 'white', border: 'none', padding: '8px 16px', borderRadius: '8px', cursor: 'pointer', fontWeight: 'bold'}}
+              >
+                🤖 Թողնել սերվերը հաշվի
+              </button>
+            </div>
+          )}
         </div>
       )}
     </div>

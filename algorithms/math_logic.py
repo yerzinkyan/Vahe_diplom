@@ -3,6 +3,46 @@ import math
 import tracemalloc 
 import random
 
+# --- ՏԵՔՍՏԻ ՈՐՈՆՄԱՆ ԱԼԳՈՐԻԹՄՆԵՐ ---
+def naive_search(pat, txt, counter):
+    M, N = len(pat), len(txt)
+    for i in range(N - M + 1):
+        j = 0
+        while j < M:
+            counter[0] += 1
+            if txt[i + j] != pat[j]: break
+            j += 1
+        if j == M: pass
+
+def compute_lps(pat, M, lps):
+    length = 0
+    lps[0] = 0
+    i = 1
+    while i < M:
+        if pat[i] == pat[length]:
+            length += 1
+            lps[i] = length
+            i += 1
+        else:
+            if length != 0: length = lps[length-1]
+            else:
+                lps[i] = 0
+                i += 1
+
+def kmp_search(pat, txt):
+    M, N = len(pat), len(txt)
+    lps = [0] * M
+    compute_lps(pat, M, lps)
+    i = j = 0
+    while i < N:
+        if pat[j] == txt[i]:
+            i += 1
+            j += 1
+        if j == M: j = lps[j-1]
+        elif i < N and pat[j] != txt[i]:
+            if j != 0: j = lps[j-1]
+            else: i += 1
+
 def slow_combinations(n, k, counter):
     counter[0] += 1
     if k == 0 or k == n: return 1
@@ -112,6 +152,26 @@ def run_calculation(slug, input_data):
             t_start = time.perf_counter()
             bubble_sort(arr.copy(), counter)
             res_data["t_slow"] = (time.perf_counter() - t_start) * 1000
+
+    elif slug == 'string_search':
+        txt = "A" * n
+        pat = "A" * (n // 2) + "B" 
+        
+        t_s = time.perf_counter()
+        kmp_search(pat, txt)
+        fast_time = (time.perf_counter() - t_s) * 1000
+        
+        res_data["t_fast"] = max(fast_time, 0.0001) 
+        res_data["result"] = "Որոնված է"
+        res_data["steps"] = [
+            "📚 Տեսություն: Knuth-Morris-Pratt (KMP)", 
+            "LPS զանգվածի կառուցում: O(M)", 
+            f"Տեքստ: {n} նիշ, Շաբլոն: {len(pat)} նիշ"
+        ]
+        if n <= 20000:
+            t_s = time.perf_counter()
+            naive_search(pat, txt, counter)
+            res_data["t_slow"] = (time.perf_counter() - t_s) * 1000
 
     elif slug == 'gcd':
         t_start = time.perf_counter()
