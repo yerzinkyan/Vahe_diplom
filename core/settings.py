@@ -107,7 +107,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Yerevan'
 
 USE_I18N = True
 
@@ -118,4 +118,15 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/6.0/howto/static-files/
 
 STATIC_URL = 'static/'
-CORS_ALLOW_ALL_ORIGINS = True
+# Համոզվիր որ այս երկուսը կան և True են
+CORS_ALLOW_CREDENTIALS = True
+# Խիստ անվտանգության պատճառով վերադառնում ենք 'Lax' ռեժիմին
+SESSION_COOKIE_SAMESITE = 'Lax'
+SESSION_COOKIE_SECURE = False
+
+# Ուշադրություն: Խուսափիր CORS_ALLOW_ALL_ORIGINS = True գրելուց, երբ CREDENTIALS-ը True է:
+# Փոխարենը նշիր կոնկրետ React-ի հասցեները.
+CORS_ALLOWED_ORIGINS = [
+    "http://127.0.0.1:5173",
+    "http://localhost:5173",
+]

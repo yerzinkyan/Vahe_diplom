@@ -5,6 +5,7 @@ import {
 } from 'recharts';
 import { generateRandomChallenge } from './challengeBank';
 import './visual.css';
+import CodeWorkspace from './CodeWorkspace'; // Ավելացրու այս տողը
 
 const ALGORITHMS_DATA = {
   fibonacci: { 
@@ -88,6 +89,171 @@ function ProgressBar({ progress, color, dark }) {
   return (
     <div className="progress-container" style={{ background: dark ? '#334155' : '#e2e8f0' }}>
       <div className="progress-bar" style={{ width: `${progress}%`, background: `linear-gradient(90deg, ${color}, ${color}aa)`, boxShadow: `0 0 8px ${color}66` }} />
+    </div>
+  );
+}
+
+// --- ՆՈՐ ԴԻՆԱՄԻԿ ՄՈԴՈՒԼ: ՌԵՍՈՒՐՍՆԵՐԻ ՕՊՏԻՄԻԶԱՑԻԱ (Knapsack Problem) ---
+function ResourceAllocator({ dark }) {
+  const [items, setItems] = useState([
+    { id: 1, name: '💻 Նոութբուք', weight: 3, value: 1500 },
+    { id: 2, name: '📷 Տեսախցիկ', weight: 2, value: 800 },
+    { id: 3, name: '🚁 Դրոն', weight: 4, value: 1200 },
+    { id: 4, name: '📱 Պլանշետ', weight: 1, value: 500 }
+  ]);
+  const [capacity, setCapacity] = useState(6);
+  const [result, setResult] = useState(null);
+  const [newItem, setNewItem] = useState({ name: '', weight: '', value: '' });
+
+  // Դինամիկ Ծրագրավորման Ալգորիթմ (Dynamic Programming)
+  const optimizeResources = () => {
+    const n = items.length;
+    const W = parseInt(capacity);
+    if (!W || W <= 0) return alert("Մուտքագրեք վավեր տարողունակություն");
+
+    // Ստեղծում ենք DP աղյուսակ
+    const dp = Array(n + 1).fill().map(() => Array(W + 1).fill(0));
+
+    for (let i = 1; i <= n; i++) {
+      for (let w = 1; w <= W; w++) {
+        const item = items[i - 1];
+        if (item.weight <= w) {
+          dp[i][w] = Math.max(dp[i - 1][w], dp[i - 1][w - item.weight] + item.value);
+        } else {
+          dp[i][w] = dp[i - 1][w];
+        }
+      }
+    }
+
+    // Վերծանում ենք ընտրված կոմբինացիան (Backtracking)
+    let resValue = dp[n][W];
+    let w = W;
+    let selected = [];
+    let calcSteps = [];
+
+    for (let i = n; i > 0 && resValue > 0; i--) {
+      if (resValue !== dp[i - 1][w]) {
+        const item = items[i - 1];
+        selected.push(item);
+        calcSteps.push(`Ընտրվեց: ${item.name} (Քաշը: ${item.weight}, Արժեքը: ֏${item.value})`);
+        resValue -= item.value;
+        w -= item.weight;
+      }
+    }
+
+    setResult({
+      maxValue: dp[n][W],
+      usedWeight: W - w,
+      selectedItems: selected,
+      steps: calcSteps
+    });
+  };
+
+  const addItem = () => {
+    if (!newItem.name || !newItem.weight || !newItem.value) return;
+    setItems([...items, { id: Date.now(), name: newItem.name, weight: parseInt(newItem.weight), value: parseInt(newItem.value) }]);
+    setNewItem({ name: '', weight: '', value: '' });
+    setResult(null); // Թարմացնելիս մաքրում ենք հին արդյունքը
+  };
+
+  const removeItem = (id) => {
+    setItems(items.filter(i => i.id !== id));
+    setResult(null);
+  };
+
+  return (
+    <div className="fade-in" style={{ maxWidth: '1000px', margin: '0 auto', paddingBottom: '50px' }}>
+      <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+        <h2 style={{ color: dark ? '#f1f5f9' : '#1e293b', fontSize: '32px' }}>🎒 Ռեսուրսների Դինամիկ Օպտիմիզացիա</h2>
+        <p style={{ color: '#64748b', fontSize: '18px' }}>Ստեղծիր քո սեփական կոմբինատորային բազան և գտիր լավագույն համադրությունը</p>
+      </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: '1.2fr 0.8fr', gap: '30px' }}>
+        {/* ՁԱԽ ԿՈՂՄ: ՏՎՅԱԼՆԵՐԻ ՄՈՒՏՔԱԳՐՈՒՄ */}
+        <div className="panel" style={{ background: dark ? '#1e293b' : 'white', borderRadius: '20px', padding: '30px', boxShadow: '0 10px 15px -3px rgba(0,0,0,0.1)' }}>
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px' }}>
+            <h3 style={{ margin: 0, color: dark ? 'white' : '#1e293b' }}>Տվյալների Բազա</h3>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <span style={{ fontWeight: 800, color: '#4f46e5' }}>ՄԱՔՍԻՄԱԼ ՔԱՇ.</span>
+              <input type="number" value={capacity} onChange={e => setCapacity(e.target.value)} className="input-box" style={{ width: '80px', background: dark ? '#0f172a' : 'white', color: dark ? 'white' : 'black' }} />
+            </div>
+          </div>
+
+          <div style={{ maxHeight: '300px', overflowY: 'auto', marginBottom: '20px', border: `1px solid ${dark ? '#334155' : '#e2e8f0'}`, borderRadius: '15px' }}>
+            <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', color: dark ? '#cbd5e1' : '#334155' }}>
+              <thead style={{ background: dark ? '#0f172a' : '#f8fafc', borderBottom: `2px solid ${dark ? '#334155' : '#e2e8f0'}` }}>
+                <tr>
+                  <th style={{ padding: '12px 15px' }}>Անվանում</th>
+                  <th style={{ padding: '12px 15px' }}>Քաշ (կգ)</th>
+                  <th style={{ padding: '12px 15px' }}>Արժեք (֏)</th>
+                  <th style={{ padding: '12px 15px' }}></th>
+                </tr>
+              </thead>
+              <tbody>
+                {items.map(item => (
+                  <tr key={item.id} style={{ borderBottom: `1px solid ${dark ? '#334155' : '#e2e8f0'}` }}>
+                    <td style={{ padding: '12px 15px' }}>{item.name}</td>
+                    <td style={{ padding: '12px 15px' }}>{item.weight}</td>
+                    <td style={{ padding: '12px 15px' }}>{item.value}</td>
+                    <td style={{ padding: '12px 15px', textAlign: 'right' }}>
+                      <button onClick={() => removeItem(item.id)} style={{ background: '#ef4444', color: 'white', border: 'none', borderRadius: '8px', padding: '5px 10px', cursor: 'pointer' }}>✖</button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+
+          <div style={{ display: 'flex', gap: '10px' }}>
+            <input type="text" placeholder="Անուն..." value={newItem.name} onChange={e => setNewItem({...newItem, name: e.target.value})} className="input-box" style={{ flex: 1, background: dark ? '#0f172a' : 'white', color: dark ? 'white' : 'black' }} />
+            <input type="number" placeholder="Քաշ..." value={newItem.weight} onChange={e => setNewItem({...newItem, weight: e.target.value})} className="input-box" style={{ width: '90px', background: dark ? '#0f172a' : 'white', color: dark ? 'white' : 'black' }} />
+            <input type="number" placeholder="Արժեք..." value={newItem.value} onChange={e => setNewItem({...newItem, value: e.target.value})} className="input-box" style={{ width: '90px', background: dark ? '#0f172a' : 'white', color: dark ? 'white' : 'black' }} />
+            <button className="btn-outline" onClick={addItem} style={{ padding: '10px 15px' }}>➕</button>
+          </div>
+          
+          <button className="btn-main" onClick={optimizeResources} style={{ width: '100%', marginTop: '20px', padding: '15px', fontSize: '16px' }}>⚡ Վերլուծել և Օպտիմալացնել</button>
+        </div>
+
+        {/* ԱՋ ԿՈՂՄ: ՎԵՐԼՈՒԾՈՒԹՅԱՆ ԱՐԴՅՈՒՆՔՆԵՐ */}
+        <div className="panel" style={{ background: dark ? '#0f172a' : '#1e293b', color: 'white', borderRadius: '20px', padding: '30px', border: dark ? '1px solid #334155' : 'none' }}>
+          <h3 style={{ color: '#38bdf8', borderBottom: '1px solid #334155', paddingBottom: '15px', marginBottom: '20px', margin: 0 }}>📊 Վերլուծության Արդյունքը</h3>
+          
+          {result ? (
+            <div className="fade-in">
+              <div style={{ display: 'flex', justifyContent: 'space-between', background: '#10b98122', padding: '20px', borderRadius: '15px', border: '1px solid #10b981', marginBottom: '20px' }}>
+                <div>
+                  <div style={{ color: '#10b981', fontSize: '12px', fontWeight: 800 }}>ԸՆԴՀԱՆՈՒՐ ԱՐԺԵՔ</div>
+                  <h2 style={{ margin: '5px 0 0 0', color: 'white' }}>֏ {result.maxValue}</h2>
+                </div>
+                <div style={{ textAlign: 'right' }}>
+                  <div style={{ color: '#10b981', fontSize: '12px', fontWeight: 800 }}>ՕԳՏԱԳՈՐԾՎԱԾ ՔԱՇ</div>
+                  <h2 style={{ margin: '5px 0 0 0', color: 'white' }}>{result.usedWeight} / {capacity} կգ</h2>
+                </div>
+              </div>
+
+              <h4 style={{ color: '#94a3b8', fontSize: '12px', textTransform: 'uppercase' }}>Ընտրված Կոմբինացիան ({result.selectedItems.length} տարր)</h4>
+              <ul style={{ listStyle: 'none', padding: 0, margin: '0 0 20px 0' }}>
+                {result.selectedItems.map((item, idx) => (
+                  <li key={idx} style={{ background: dark ? '#1e293b' : '#334155', padding: '10px 15px', borderRadius: '10px', marginBottom: '8px', display: 'flex', justifyContent: 'space-between' }}>
+                    <span>{item.name}</span>
+                    <span style={{ color: '#38bdf8', fontWeight: 'bold' }}>+ ֏{item.value}</span>
+                  </li>
+                ))}
+              </ul>
+
+              <h4 style={{ color: '#94a3b8', fontSize: '12px', textTransform: 'uppercase' }}>Ալգորիթմի Քայլերը</h4>
+              <div style={{ fontSize: '13px', color: '#cbd5e1', background: dark ? '#1e293b' : '#334155', padding: '15px', borderRadius: '10px', fontFamily: 'monospace' }}>
+                {result.steps.map((step, idx) => <div key={idx}>[{idx + 1}] {step}</div>)}
+              </div>
+            </div>
+          ) : (
+            <div style={{ textAlign: 'center', color: '#64748b', marginTop: '60px' }}>
+              <div style={{ fontSize: '40px', marginBottom: '15px' }}>⚖️</div>
+              <p>Սահմանեք պարամետրերը և սեղմեք «Օպտիմալացնել»՝ կոմբինատորային վերլուծությունը սկսելու համար։</p>
+            </div>
+          )}
+        </div>
+      </div>
     </div>
   );
 }
@@ -249,7 +415,6 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
   return (
     <div className="fade-in">
       <div className='header'>
-        <button onClick={onBack} className="btn-back">⬅️ Գլխավոր Էջ</button>
         <div>
           <h2 style={{ margin: 0, color: dark ? '#f1f5f9' : '#1e293b' }}>{algoInfo.icon} {algoInfo.title}</h2>
           <p className="p" style={subtext}>Անկախ լաբորատոր մոդուլ</p>
@@ -489,6 +654,7 @@ function App() {
   return (
     <div style={{ minHeight: '100vh', backgroundColor: bg, padding: '40px 20px', fontFamily: 'Inter, sans-serif', transition: 'background 0.3s' }}>
       <style>{`
+        /* Քո ոճերը մնում են նույնը... */
         .fade-in { animation: fadeIn 0.5s ease-out; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .btn-main { background: #4f46e5; color: white; padding: 12px 28px; border-radius: 14px; border: none; cursor: pointer; font-weight: 700; transition: all 0.2s; box-shadow: 0 4px 14px 0 rgba(79,70,229,0.39); }
@@ -517,12 +683,46 @@ function App() {
           <button className="dark-toggle" onClick={() => setDark(!dark)} style={{ position: 'absolute', right: 0, top: 0, background: dark ? '#1e293b' : 'white', border: `2px solid ${dark ? '#334155' : '#e2e8f0'}`, color: dark ? '#f1f5f9' : '#475569' }}>
             {dark ? '☀️ Լույս' : '🌙 Մութ'}
           </button>
-          <h1 className="main-app-title" style={{ color: headingColor }}>Գիտական Լաբորատորիա 🔬</h1>
-          <p className="main-app-subtitle" style={{ color: subtextColor }}>Ալգորիթմների և տվյալների կառույցների վերլուծության հարթակ</p>
+          
+          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+            <div>
+              <h1 className="main-app-title" style={{ color: headingColor, margin: 0 }}>Գիտական Լաբորատորիա 🔬</h1>
+              <p className="main-app-subtitle" style={{ color: subtextColor, marginTop: '5px' }}>Ալգորիթմների և տվյալների կառույցների վերլուծության հարթակ</p>
+            </div>
+            
+            {/* Գլխավոր Մենյուի Կոճակները դնում ենք այստեղ */}
+            {view !== 'home' && (
+              <button className="btn-back" onClick={() => setView('home')} style={{ padding: '12px 25px', marginRight: '120px', marginBottom: '20px' }}>
+                🏠 Գլխավոր Էջ
+              </button>
+            )}
+          </div>
         </header>
 
-        {view === 'home' ? (
+        {/* --- ԷՋԵՐԻ ՃԻՇՏ ՓՈԽԱՐԿՈՒՄ (ROUTING) --- */}
+        
+        {view === 'home' && (
           <div className="grid-container fade-in">
+            {/* ՆՈՐ ԴԻՆԱՄԻԿ ՄՈԴՈՒԼԻ ՔԱՐՏԸ ԳԼԽԱՎՈՐ ԷՋՈՒՄ */}
+              <div className="algo-card" onClick={() => setView('workspace')} style={{ background: dark ? '#0f172a' : '#10b981', border: `2px solid ${dark ? '#10b981' : 'transparent'}`, gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: '20px', marginBottom: '20px' }}>
+                <div style={{ fontSize: '60px' }}>👨‍💻</div>
+                <div>
+                  <h3 style={{ color: 'white', fontSize: '24px', margin: '0 0 10px 0' }}>Ալգորիթմների Լաբորատորիա (IDE)</h3>
+                  <p style={{ color: '#ecfdf5', margin: 0, fontSize: '15px' }}>Գրիր քո սեփական Python կոդը անմիջապես բրաուզերում և վերլուծիր դրա արդյունավետությունը:</p>
+                </div>
+                <div style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.2)', color: 'white', padding: '10px 20px', borderRadius: '12px', fontWeight: 800 }}>ԲԱՑԵԼ IDE-ն ➔</div>
+              </div>
+            <div className="algo-card" onClick={() => setView('allocator')} style={{ background: dark ? '#0f172a' : '#4f46e5', border: `2px solid ${dark ? '#4f46e5' : 'transparent'}`, gridColumn: '1 / -1', display: 'flex', alignItems: 'center', gap: '20px' }}>
+              <div style={{ fontSize: '60px' }}>🎒</div>
+              {/* ՆՈՐ IDE ՄՈԴՈՒԼԻ ՔԱՐՏԸ */}
+              <div>
+                <h3 style={{ color: 'white', fontSize: '24px', margin: '0 0 10px 0' }}>Դինամիկ Օպտիմիզացիա (Knapsack)</h3>
+                <p style={{ color: '#e0e7ff', margin: 0, fontSize: '15px' }}>Ստեղծիր քո սեփական կոմբինատորային բազան և վերլուծիր դինամիկ ծրագրավորման ալգորիթմով։</p>
+              </div>
+              <div style={{ marginLeft: 'auto', background: 'rgba(255,255,255,0.2)', color: 'white', padding: '10px 20px', borderRadius: '12px', fontWeight: 800 }}>ԲԱՑԵԼ ՄՈԴՈՒԼԸ ➔</div>
+            </div>
+
+            {/* ՀԻՆ ԱԼԳՈՐԻԹՄՆԵՐԻ ՔԱՐՏԵՐԸ */}
             {Object.values(ALGORITHMS_DATA).map(a => (
               <div key={a.id} className="algo-card" onClick={() => setView(a.id)} style={{ background: cardBg, border: `1px solid ${cardBorder}` }}>
                 <div className="algo-card-icon" style={{ background: dark ? '#1e3a5f' : '#f5f3ff' }}>{a.icon}</div>
@@ -537,9 +737,18 @@ function App() {
               </div>
             ))}
           </div>
-        ) : <AlgorithmPage algoInfo={ALGORITHMS_DATA[view]} onBack={() => setView('home')} dark={dark} />}
+        )}
+
+        {view === 'allocator' && <ResourceAllocator dark={dark} />}
+        {view === 'workspace' && <CodeWorkspace dark={dark} />}
+        
+        {view !== 'home' && view !== 'allocator' && ALGORITHMS_DATA[view] && (
+          <AlgorithmPage algoInfo={ALGORITHMS_DATA[view]} onBack={() => setView('home')} dark={dark} />
+        )}
+
       </div>
     </div>
   );
 }
+
 export default App;

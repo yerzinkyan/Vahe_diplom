@@ -1,0 +1,484 @@
+[
+  {
+    "model": "algorithms.problem",
+    "pk": 1,
+    "fields": {
+      "title": "Զուգորդություններ (Combinations)",
+      "slug": "combinations",
+      "topic": "Կոմբինատորիկա",
+      "difficulty": "Medium",
+      "description": "<p>Տրված են <b>n</b> և <b>k</b> ամբողջ թվերը: Վերադարձրեք 1-ից մինչև <b>n</b> թվերից կազմված բոլոր հնարավոր <b>k</b> երկարությամբ զուգորդությունները (combinations): Կարող եք վերադարձնել պատասխանը ցանկացած հերթականությամբ:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> n = 4, k = 2\n<strong>Ելք:</strong> [[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]</pre>",
+      "constraints": "<ul><li>1 <= n <= 20</li><li>1 <= k <= n</li></ul>",
+      "starter_code": "def solve(n, k):\n    pass",
+      "test_cases": [
+        {"inputs": "4, 2", "expected": "[[1, 2], [1, 3], [1, 4], [2, 3], [2, 4], [3, 4]]"},
+        {"inputs": "1, 1", "expected": "[[1]]"},
+        {"inputs": "5, 1", "expected": "[[1], [2], [3], [4], [5]]"},
+        {"inputs": "3, 3", "expected": "[[1, 2, 3]]"},
+        {"inputs": "2, 1", "expected": "[[1], [2]]"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 2,
+    "fields": {
+      "title": "Տեղափոխություններ (Permutations)",
+      "slug": "permutations",
+      "topic": "Կոմբինատորիկա",
+      "difficulty": "Medium",
+      "description": "<p>Տրված է եզակի (չկրկնվող) ամբողջ թվերի <b>nums</b> զանգվածը: Վերադարձրեք այդ թվերի բոլոր հնարավոր տեղափոխությունները (permutations): Պատասխանը կարող եք վերադարձնել ցանկացած հերթականությամբ:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> nums = [1, 2, 3]\n<strong>Ելք:</strong> [[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]</pre>",
+      "constraints": "<ul><li>1 <= nums.length <= 6</li></ul>",
+      "starter_code": "def solve(nums):\n    pass",
+      "test_cases": [
+        {"inputs": "[1,2,3]", "expected": "[[1, 2, 3], [1, 3, 2], [2, 1, 3], [2, 3, 1], [3, 1, 2], [3, 2, 1]]"},
+        {"inputs": "[0,1]", "expected": "[[0, 1], [1, 0]]"},
+        {"inputs": "[1]", "expected": "[[1]]"},
+        {"inputs": "[1,2]", "expected": "[[1, 2], [2, 1]]"},
+        {"inputs": "[10,20,30]", "expected": "[[10, 20, 30], [10, 30, 20], [20, 10, 30], [20, 30, 10], [30, 10, 20], [30, 20, 10]]"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 3,
+    "fields": {
+      "title": "Ենթաբազմություններ (Subsets)",
+      "slug": "subsets",
+      "topic": "Կոմբինատորիկա",
+      "difficulty": "Medium",
+      "description": "<p>Տրված է եզակի ամբողջ թվերի <b>nums</b> զանգվածը: Վերադարձրեք դրա բոլոր հնարավոր ենթաբազմությունները (subsets): Լուծման մեջ չպետք է լինեն կրկնվող ենթաբազմություններ: Դատարկ զանգվածը նույնպես համարվում է ենթաբազմություն:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> nums = [1, 2]\n<strong>Ելք:</strong> [[], [1], [2], [1, 2]]</pre>",
+      "constraints": "<ul><li>1 <= nums.length <= 10</li></ul>",
+      "starter_code": "def solve(nums):\n    pass",
+      "test_cases": [
+        {"inputs": "[1,2,3]", "expected": "[[], [1], [2], [1, 2], [3], [1, 3], [2, 3], [1, 2, 3]]"},
+        {"inputs": "[0]", "expected": "[[], [0]]"},
+        {"inputs": "[]", "expected": "[[]]"},
+        {"inputs": "[1,2]", "expected": "[[], [1], [2], [1, 2]]"},
+        {"inputs": "[9]", "expected": "[[], [9]]"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 4,
+    "fields": {
+      "title": "Աստիճաններով Բարձրանալը (Climbing Stairs)",
+      "slug": "climbing-stairs",
+      "topic": "Դինամիկ Ծրագրավորում",
+      "difficulty": "Easy",
+      "description": "<p>Դուք բարձրանում եք աստիճաններով: Գագաթին հասնելու համար անհրաժեշտ է կատարել <b>n</b> քայլ: Ամեն անգամ դուք կարող եք բարձրանալ կամ 1, կամ 2 աստիճան: Գտեք, թե քանի՞ տարբեր եղանակներով կարող եք հասնել տանիքին:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> n = 3\n<strong>Ելք:</strong> 3\n<strong>Բացատրություն:</strong> Կա 3 եղանակ. 1) 1+1+1 քայլ, 2) 1+2 քայլ, 3) 2+1 քայլ:</pre>",
+      "constraints": "<ul><li>1 <= n <= 45</li></ul>",
+      "starter_code": "def solve(n):\n    pass",
+      "test_cases": [
+        {"inputs": "1", "expected": "1"},
+        {"inputs": "2", "expected": "2"},
+        {"inputs": "3", "expected": "3"},
+        {"inputs": "4", "expected": "5"},
+        {"inputs": "5", "expected": "8"},
+        {"inputs": "10", "expected": "89"},
+        {"inputs": "20", "expected": "10946"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 5,
+    "fields": {
+      "title": "Մաքսիմալ Ենթազանգված (Max Subarray)",
+      "slug": "maximum-subarray",
+      "topic": "Դինամիկ Ծրագրավորում",
+      "difficulty": "Medium",
+      "description": "<p>Տրված է ամբողջ թվերի <b>nums</b> զանգվածը: Գտեք այն անընդմեջ ենթազանգվածը (contiguous subarray), որն ունի տարրերի ամենամեծ գումարը, և վերադարձրեք այդ գումարը:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> nums = [-2, 1, -3, 4, -1, 2, 1, -5, 4]\n<strong>Ելք:</strong> 6\n<strong>Բացատրություն:</strong> [4, -1, 2, 1] ենթազանգվածի գումարը ամենամեծն է (հավասար է 6-ի):</pre>",
+      "constraints": "<ul><li>1 <= nums.length <= 10^5</li></ul>",
+      "starter_code": "def solve(nums):\n    pass",
+      "test_cases": [
+        {"inputs": "[-2,1,-3,4,-1,2,1,-5,4]", "expected": "6"},
+        {"inputs": "[1]", "expected": "1"},
+        {"inputs": "[5,4,-1,7,8]", "expected": "23"},
+        {"inputs": "[-1]", "expected": "-1"},
+        {"inputs": "[1,2,3,4]", "expected": "10"},
+        {"inputs": "[-2,-1]", "expected": "-1"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 6,
+    "fields": {
+      "title": "Մետաղադրամների Մանրում (Coin Change)",
+      "slug": "coin-change",
+      "topic": "Դինամիկ Ծրագրավորում",
+      "difficulty": "Medium",
+      "description": "<p>Տրված է <b>coins</b> զանգվածը, որը ներկայացնում է ձեր ունեցած մետաղադրամների անվանական արժեքները, և <b>amount</b> ամբողջ թիվը՝ ընդհանուր գումարը: Գտեք մետաղադրամների նվազագույն քանակը, որոնցով կարելի է կազմել այդ գումարը: Եթե գումարը հնարավոր չէ կազմել, վերադարձրեք -1: Ենթադրվում է, որ յուրաքանչյուր մետաղադրամից ունեք անսահմանափակ քանակություն:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> coins = [1, 2, 5], amount = 11\n<strong>Ելք:</strong> 3\n<strong>Բացատրություն:</strong> 11 = 5 + 5 + 1 (ընդհանուր 3 մետաղադրամ):</pre>",
+      "constraints": "<ul><li>1 <= coins.length <= 12</li></ul>",
+      "starter_code": "def solve(coins, amount):\n    pass",
+      "test_cases": [
+        {"inputs": "[1,2,5], 11", "expected": "3"},
+        {"inputs": "[2], 3", "expected": "-1"},
+        {"inputs": "[1], 0", "expected": "0"},
+        {"inputs": "[1], 1", "expected": "1"},
+        {"inputs": "[1], 2", "expected": "2"},
+        {"inputs": "[186,419,83,408], 6249", "expected": "20"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 7,
+    "fields": {
+      "title": "Կղզիների Քանակը (Number of Islands)",
+      "slug": "number-of-islands",
+      "topic": "Գրաֆների Տեսություն",
+      "difficulty": "Medium",
+      "description": "<p>Ձեզ տրված է <b>M x N</b> չափանի 2D ցանց (grid), որը բաղկացած է '1'-երից (ցամաք) և '0'-ներից (ջուր): Գտեք և վերադարձրեք կղզիների ընդհանուր քանակը: Կղզին շրջապատված է ջրով և ձևավորվում է՝ միացնելով հարակից ցամաքները միայն <b>հորիզոնական</b> կամ <b>ուղղահայաց</b> ուղղություններով: Կարող եք համարել, որ ցանցի եզրերը շրջապատված են ջրով:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> grid = [['1','1','0'],['0','1','0'],['0','0','1']]\n<strong>Ելք:</strong> 2\n<strong>Բացատրություն:</strong> Վերևի ձախ մասում կա մեկ միացված կղզի, իսկ ներքևի աջ անկյունում՝ ևս մեկը:</pre>",
+      "constraints": "<ul><li>M, N <= 300</li></ul>",
+      "starter_code": "def solve(grid):\n    pass",
+      "test_cases": [
+        {"inputs": "[['1','1','0'],['0','1','0'],['0','0','1']]", "expected": "2"},
+        {"inputs": "[['1','1','1'],['0','1','0'],['1','1','1']]", "expected": "1"},
+        {"inputs": "[['0','0','0'],['0','0','0']]", "expected": "0"},
+        {"inputs": "[['1','0','1'],['0','1','0'],['1','0','1']]", "expected": "5"},
+        {"inputs": "[['1','1'],['1','1']]", "expected": "1"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 8,
+    "fields": {
+      "title": "Դատավորը Քաղաքում (Find Town Judge)",
+      "slug": "find-town-judge",
+      "topic": "Գրաֆների Տեսություն",
+      "difficulty": "Easy",
+      "description": "<p>Քաղաքում ապրում է <b>n</b> մարդ՝ համարակալված 1-ից մինչև n: Ասում են, որ նրանցից մեկը գաղտնի քաղաքի դատավորն է: Եթե քաղաքի դատավորը գոյություն ունի, ապա՝ նա ոչ մեկին չի վստահում, իսկ մնացած բոլոր (n - 1) մարդիկ վստահում են նրան: Ձեզ տրված է <b>trust</b> երկչափ զանգվածը, որտեղ trust[i] = [a, b] նշանակում է, որ <b>a</b>-ն վստահում է <b>b</b>-ին: Վերադարձրեք դատավորի համարը (եթե չկա, վերադարձրեք -1):</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> n = 3, trust = [[1, 3], [2, 3]]\n<strong>Ելք:</strong> 3\n<strong>Բացատրություն:</strong> 1-ը և 2-ը վստահում են 3-ին, իսկ 3-ը ոչ մեկին չի վստահում:</pre>",
+      "constraints": "<ul><li>1 <= n <= 1000</li></ul>",
+      "starter_code": "def solve(n, trust):\n    pass",
+      "test_cases": [
+        {"inputs": "2, [[1,2]]", "expected": "2"},
+        {"inputs": "3, [[1,3],[2,3]]", "expected": "3"},
+        {"inputs": "3, [[1,3],[2,3],[3,1]]", "expected": "-1"},
+        {"inputs": "3, [[1,2],[2,3]]", "expected": "-1"},
+        {"inputs": "4, [[1,3],[2,3],[4,3]]", "expected": "3"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 9,
+    "fields": {
+      "title": "Ամենամեծ Կղզու Մակերեսը",
+      "slug": "max-area-of-island",
+      "topic": "Գրաֆների Տեսություն",
+      "difficulty": "Medium",
+      "description": "<p>Տրված է <b>M x N</b> չափանի <b>grid</b> երկչափ զանգված, որտեղ 1-ը ցամաք է, իսկ 0-ն՝ ջուր: Կղզին 1-երի (ցամաքի) միացություն է՝ հորիզոնական կամ ուղղահայաց ուղղություններով: Կղզու մակերեսը նրա մեջ եղած 1-երի քանակն է: Վերադարձրեք մատրիցայում գտնվող ամենամեծ կղզու մակերեսը: Եթե կղզի չկա, վերադարձրեք 0:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> grid = [[1, 1, 0], [1, 1, 0], [0, 0, 1]]\n<strong>Ելք:</strong> 4\n<strong>Բացատրություն:</strong> Վերևի ձախ անկյունում ունենք 4 միավոր (չորս հատ 1) մակերեսով կղզի, իսկ ներքևի աջ անկյունում՝ 1 միավոր մակերեսով: Ամենամեծը 4-ն է:</pre>",
+      "constraints": "<ul><li>M, N <= 50</li></ul>",
+      "starter_code": "def solve(grid):\n    pass",
+      "test_cases": [
+        {"inputs": "[[1,1,0],[1,1,0],[0,0,1]]", "expected": "4"},
+        {"inputs": "[[0,0,0]]", "expected": "0"},
+        {"inputs": "[[1,1,1,1,1]]", "expected": "5"},
+        {"inputs": "[[1,0,1],[1,0,1]]", "expected": "2"},
+        {"inputs": "[[1,1],[1,0]]", "expected": "3"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 10,
+    "fields": {
+      "title": "Երկու Թվերի Գումար (Two Sum)",
+      "slug": "two-sum",
+      "topic": "Տեսակավորում և Որոնում",
+      "difficulty": "Easy",
+      "description": "<p>Տրված է ամբողջ թվերի <b>nums</b> զանգված և մի ամբողջ թիվ՝ <b>target</b>: Գտեք այն երկու թվերի ինդեքսները (ցուցիչները), որոնց գումարը հավասար է target-ին: Կարող եք ենթադրել, որ յուրաքանչյուր մուտքային տվյալ ունի ճիշտ մեկ լուծում, և չեք կարող նույն տարրը օգտագործել երկու անգամ: Պատասխանը կարող եք վերադարձնել ցանկացած հերթականությամբ:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> nums = [2, 7, 11, 15], target = 9\n<strong>Ելք:</strong> [0, 1]\n<strong>Բացատրություն:</strong> Քանի որ nums[0] + nums[1] == 9, վերադարձնում ենք [0, 1]:</pre>",
+      "constraints": "<ul><li>2 <= nums.length <= 10^4</li></ul>",
+      "starter_code": "def solve(nums, target):\n    pass",
+      "test_cases": [
+        {"inputs": "[2,7,11,15], 9", "expected": "[0, 1]"},
+        {"inputs": "[3,2,4], 6", "expected": "[1, 2]"},
+        {"inputs": "[3,3], 6", "expected": "[0, 1]"},
+        {"inputs": "[1,5,8,3], 11", "expected": "[2, 3]"},
+        {"inputs": "[-1,-2,-3,-4,-5], -8", "expected": "[2, 4]"},
+        {"inputs": "[0,4,3,0], 0", "expected": "[0, 3]"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 11,
+    "fields": {
+      "title": "Բինար Որոնում (Binary Search)",
+      "slug": "binary-search",
+      "topic": "Տեսակավորում և Որոնում",
+      "difficulty": "Easy",
+      "description": "<p>Տրված է <b>աճման կարգով տեսակավորված</b> ամբողջ թվերի <b>nums</b> զանգված և <b>target</b> թիվ: Գրեք ֆունկցիա, որը կփնտրի target-ը nums-ի մեջ բինար որոնման (Binary Search) ալգորիթմով: Եթե target-ը գոյություն ունի զանգվածում, վերադարձրեք նրա ինդեքսը, հակառակ դեպքում՝ -1: Ալգորիթմը պետք է աշխատի <b>O(log n)</b> ժամանակային բարդությամբ:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> nums = [-1, 0, 3, 5, 9, 12], target = 9\n<strong>Ելք:</strong> 4\n<strong>Բացատրություն:</strong> 9-ը գտնվում է զանգվածի 4-րդ ինդեքսում:</pre>",
+      "constraints": "<ul><li>1 <= nums.length <= 10^4</li></ul>",
+      "starter_code": "def solve(nums, target):\n    pass",
+      "test_cases": [
+        {"inputs": "[-1,0,3,5,9,12], 9", "expected": "4"},
+        {"inputs": "[-1,0,3,5,9,12], 2", "expected": "-1"},
+        {"inputs": "[5], 5", "expected": "0"},
+        {"inputs": "[5], 2", "expected": "-1"},
+        {"inputs": "[1,3,5,7,9], 3", "expected": "1"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 12,
+    "fields": {
+      "title": "Միավորել Միջակայքերը (Merge Intervals)",
+      "slug": "merge-intervals",
+      "topic": "Տեսակավորում և Որոնում",
+      "difficulty": "Medium",
+      "description": "<p>Տրված է միջակայքերի զանգված <b>intervals</b>, որտեղ intervals[i] = [start, end]: Միավորեք բոլոր իրար հատող միջակայքերը և վերադարձրեք չհատվող միջակայքերի նոր զանգված, որն ընդգրկում է բոլոր սկզբնական միջակայքերը:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> intervals = [[1, 3], [2, 6], [8, 10], [15, 18]]\n<strong>Ելք:</strong> [[1, 6], [8, 10], [15, 18]]\n<strong>Բացատրություն:</strong> [1, 3] և [2, 6] միջակայքերը հատվում են, ուստի դրանք միավորվում են [1, 6]-ի:</pre>",
+      "constraints": "<ul><li>1 <= intervals.length <= 10^4</li></ul>",
+      "starter_code": "def solve(intervals):\n    pass",
+      "test_cases": [
+        {"inputs": "[[1,3],[2,6],[8,10],[15,18]]", "expected": "[[1, 6], [8, 10], [15, 18]]"},
+        {"inputs": "[[1,4],[4,5]]", "expected": "[[1, 5]]"},
+        {"inputs": "[[1,4],[0,4]]", "expected": "[[0, 4]]"},
+        {"inputs": "[[1,4],[2,3]]", "expected": "[[1, 4]]"},
+        {"inputs": "[[1,10],[2,3],[4,5],[6,7]]", "expected": "[[1, 10]]"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 13,
+    "fields": {
+      "title": "Պալինդրոմ Թիվ",
+      "slug": "palindrome-number",
+      "topic": "Մաթեմատիկա",
+      "difficulty": "Easy",
+      "description": "<p>Տրված է <b>x</b> ամբողջ թիվը: Վերադարձրեք True, եթե այն պալինդրոմ է, և False՝ հակառակ դեպքում: Թիվը պալինդրոմ է, երբ այն և՛ աջից ձախ, և՛ ձախից աջ կարդացվում է նույն կերպ:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> x = 121\n<strong>Ելք:</strong> True\n<strong>Բացատրություն:</strong> 121-ը ձախից աջ և աջից ձախ կարդացվում է որպես 121:</pre>",
+      "constraints": "<ul><li>-2^31 <= x <= 2^31 - 1</li></ul>",
+      "starter_code": "def solve(x):\n    pass",
+      "test_cases": [
+        {"inputs": "121", "expected": "True"},
+        {"inputs": "-121", "expected": "False"},
+        {"inputs": "10", "expected": "False"},
+        {"inputs": "0", "expected": "True"},
+        {"inputs": "12321", "expected": "True"},
+        {"inputs": "11", "expected": "True"},
+        {"inputs": "123", "expected": "False"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 14,
+    "fields": {
+      "title": "2-ի Աստիճան",
+      "slug": "power-of-two",
+      "topic": "Մաթեմատիկա",
+      "difficulty": "Easy",
+      "description": "<p>Տրված է <b>n</b> ամբողջ թիվը: Գրեք ֆունկցիա, որը կվերադարձնի True, եթե այն հանդիսանում է 2-ի աստիճան, և False հակառակ դեպքում: Թիվը համարվում է 2-ի աստիճան, եթե գոյություն ունի այնպիսի ամբողջ x թիվ, որ n == 2^x:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> n = 16\n<strong>Ելք:</strong> True\n<strong>Բացատրություն:</strong> 2^4 = 16</pre>",
+      "constraints": "<ul><li>-2^31 <= n <= 2^31 - 1</li></ul>",
+      "starter_code": "def solve(n):\n    pass",
+      "test_cases": [
+        {"inputs": "1", "expected": "True"},
+        {"inputs": "16", "expected": "True"},
+        {"inputs": "3", "expected": "False"},
+        {"inputs": "0", "expected": "False"},
+        {"inputs": "-16", "expected": "False"},
+        {"inputs": "1024", "expected": "True"},
+        {"inputs": "536870912", "expected": "True"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 15,
+    "fields": {
+      "title": "Ֆիբոնաչիի Թիվ (Fibonacci)",
+      "slug": "fibonacci-number",
+      "topic": "Մաթեմատիկա",
+      "difficulty": "Easy",
+      "description": "<p>Ֆիբոնաչիի թվերը կազմում են մի հաջորդականություն, որտեղ յուրաքանչյուր թիվ հավասար է իր նախորդ երկուսի գումարին, ընդ որում սկզբնական երկու թվերն են 0 և 1 (այսինքն՝ F(0) = 0, F(1) = 1): Տրված է <b>n</b> ամբողջ թիվը, գտեք և վերադարձրեք F(n)-ը:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> n = 4\n<strong>Ելք:</strong> 3\n<strong>Բացատրություն:</strong> F(4) = F(3) + F(2) = 2 + 1 = 3:</pre>",
+      "constraints": "<ul><li>0 <= n <= 30</li></ul>",
+      "starter_code": "def solve(n):\n    pass",
+      "test_cases": [
+        {"inputs": "0", "expected": "0"},
+        {"inputs": "1", "expected": "1"},
+        {"inputs": "2", "expected": "1"},
+        {"inputs": "3", "expected": "2"},
+        {"inputs": "4", "expected": "3"},
+        {"inputs": "10", "expected": "55"},
+        {"inputs": "20", "expected": "6765"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 16,
+    "fields": {
+      "title": "N-Թագուհիներ (N-Queens)",
+      "slug": "n-queens",
+      "topic": "Կոմբինատորիկա",
+      "difficulty": "Hard",
+      "description": "<p><b>n-թագուհիների</b> խնդիրը կայանում է n x n շախմատային տախտակի վրա n թագուհիներ տեղադրելու մեջ այնպես, որ ոչ մի երկու թագուհի միմյանց չհարվածեն (ուղղահայաց, հորիզոնական և անկյունագծերով): Վերադարձրեք բոլոր հնարավոր լուծումները:</p><p><strong>Օրինակ 1:</strong></p><pre><strong>Մուտք:</strong> n = 4\n<strong>Ելք:</strong> [[\".Q..\",\"...Q\",\"Q...\",\"..Q.\"],[\"..Q.\",\"Q...\",\"...Q\",\".Q..\"]]</pre>",
+      "constraints": "<ul><li>1 <= n <= 9</li></ul>",
+      "starter_code": "def solve(n):\n    pass",
+      "test_cases": [
+        {"inputs": "4", "expected": "[[\".Q..\", \"...Q\", \"Q...\", \"..Q.\"], [\"..Q.\", \"Q...\", \"...Q\", \".Q..\"]]"},
+        {"inputs": "1", "expected": "[[\"Q\"]]"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 17,
+    "fields": {
+      "title": "Սուդոկու Լուծող (Sudoku Solver)",
+      "slug": "sudoku-solver",
+      "topic": "Կոմբինատորիկա",
+      "difficulty": "Hard",
+      "description": "<p>Գրեք ծրագիր, որը կլուծի 9x9 Սուդոկուի ցանցը՝ լրացնելով դատարկ վանդակները: Լուծումը պետք է բավարարի հետևյալ կանոններին. 1. Յուրաքանչյուր թիվ 1-9 պետք է հայտնվի յուրաքանչյուր տողում ուղիղ մեկ անգամ: 2. Յուրաքանչյուր սյունակում՝ մեկ անգամ: 3. Յուրաքանչյուր 3x3 ենթացանցում՝ մեկ անգամ:</p>",
+      "constraints": "<ul><li>Մուտքը միշտ 9x9 մատրիցա է:</li><li>Գոյություն ունի միայն մեկ ճիշտ լուծում:</li></ul>",
+      "starter_code": "def solve(board):\n    pass",
+      "test_cases": [
+        {"inputs": "[[\"5\",\"3\",\".\",\".\",\"7\",\".\",\".\",\".\",\".\"],[\"6\",\".\",\".\",\"1\",\"9\",\"5\",\".\",\".\",\".\"],[\".\",\"9\",\"8\",\".\",\".\",\".\",\".\",\"6\",\".\"],[\"8\",\".\",\".\",\".\",\"6\",\".\",\".\",\".\",\"3\"],[\"4\",\".\",\".\",\"8\",\".\",\"3\",\".\",\".\",\"1\"],[\"7\",\".\",\".\",\".\",\"2\",\".\",\".\",\".\",\"6\"],[\".\",\"6\",\".\",\".\",\".\",\".\",\"2\",\"8\",\".\"],[\".\",\".\",\".\",\"4\",\"1\",\"9\",\".\",\".\",\"5\"],[\".\",\".\",\".\",\".\",\"8\",\".\",\".\",\"7\",\"9\"]]", "expected": "[[\"5\",\"3\",\"4\",\"6\",\"7\",\"8\",\"9\",\"1\",\"2\"],[\"6\",\"7\",\"2\",\"1\",\"9\",\"5\",\"3\",\"4\",\"8\"],[\"1\",\"9\",\"8\",\"3\",\"4\",\"2\",\"5\",\"6\",\"7\"],[\"8\",\"5\",\"9\",\"7\",\"6\",\"1\",\"4\",\"2\",\"3\"],[\"4\",\"2\",\"6\",\"8\",\"5\",\"3\",\"7\",\"9\",\"1\"],[\"7\",\"1\",\"3\",\"9\",\"2\",\"4\",\"8\",\"5\",\"6\"],[\"9\",\"6\",\"1\",\"5\",\"3\",\"7\",\"2\",\"8\",\"4\"],[\"2\",\"8\",\"7\",\"4\",\"1\",\"9\",\"6\",\"3\",\"5\"],[\"3\",\"4\",\"5\",\"2\",\"8\",\"6\",\"1\",\"7\",\"9\"]]"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 18,
+    "fields": {
+      "title": "Խմբագրման Հեռավորություն (Edit Distance)",
+      "slug": "edit-distance",
+      "topic": "Դինամիկ Ծրագրավորում",
+      "difficulty": "Hard",
+      "description": "<p>Տրված են երկու բառեր՝ <b>word1</b> և <b>word2</b>: Գտեք մինիմալ գործողությունների քանակը, որոնք անհրաժեշտ են word1-ը word2 դարձնելու համար: Թույլատրելի գործողություններն են՝ 1. Տառի ավելացում, 2. Տառի ջնջում, 3. Տառի փոխարինում:</p>",
+      "constraints": "<ul><li>0 <= word1.length, word2.length <= 500</li></ul>",
+      "starter_code": "def solve(word1, word2):\n    pass",
+      "test_cases": [
+        {"inputs": "\"horse\", \"ros\"", "expected": "3"},
+        {"inputs": "\"intention\", \"execution\"", "expected": "5"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 19,
+    "fields": {
+      "title": "Անձրևաջրի Կուտակում (Trapping Rain Water)",
+      "slug": "trapping-rain-water",
+      "topic": "Դինամիկ Ծրագրավորում",
+      "difficulty": "Hard",
+      "description": "<p>Տրված է ոչ բացասական ամբողջ թվերի <b>height</b> զանգվածը, որտեղ յուրաքանչյուր տարր ներկայացնում է սյունի բարձրությունը 1 լայնությամբ: Հաշվեք, թե որքան ջուր կարող է կուտակվել սյուների արանքում անձրևից հետո:</p>",
+      "constraints": "<ul><li>n == height.length</li><li>1 <= n <= 2 * 10^4</li></ul>",
+      "starter_code": "def solve(height):\n    pass",
+      "test_cases": [
+        {"inputs": "[0,1,0,2,1,0,1,3,2,1,2,1]", "expected": "6"},
+        {"inputs": "[4,2,0,3,2,5]", "expected": "9"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 20,
+    "fields": {
+      "title": "Բառերի Սանդուղք II (Word Ladder II)",
+      "slug": "word-ladder-ii",
+      "topic": "Գրաֆների Տեսություն",
+      "difficulty": "Hard",
+      "description": "<p>Տրված են երկու բառեր (beginWord և endWord) և բառարան: Գտեք <b>բոլոր ամենակարճ</b> վերափոխման հաջորդականությունները beginWord-ից endWord այնպես, որ ամեն քայլում փոխվի միայն մեկ տառ:</p>",
+      "constraints": "<ul><li>Բոլոր բառերը նույն երկարության են:</li><li>Բառարանում կա առավելագույնը 500 բառ:</li></ul>",
+      "starter_code": "def solve(beginWord, endWord, wordList):\n    pass",
+      "test_cases": [
+        {"inputs": "\"hit\", \"cog\", [\"hot\",\"dot\",\"dog\",\"lot\",\"log\",\"cog\"]", "expected": "[[\"hit\",\"hot\",\"dot\",\"dog\",\"cog\"],[\"hit\",\"hot\",\"lot\",\"log\",\"cog\"]]"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 21,
+    "fields": {
+      "title": "Ամենաերկար Աճող Ուղին Մատրիցայում",
+      "slug": "longest-increasing-path",
+      "topic": "Գրաֆների Տեսություն",
+      "difficulty": "Hard",
+      "description": "<p>Տրված է <b>m x n</b> ամբողջ թվերի մատրիցա: Գտեք ամենաերկար աճող ուղու երկարությունը: Յուրաքանչյուր վանդակից կարող եք շարժվել չորս ուղղություններով (վերև, ներքև, ձախ, աջ):</p>",
+      "constraints": "<ul><li>m, n <= 200</li></ul>",
+      "starter_code": "def solve(matrix):\n    pass",
+      "test_cases": [
+        {"inputs": "[[9,9,4],[6,6,8],[2,1,1]]", "expected": "4"},
+        {"inputs": "[[3,4,5],[3,2,6],[2,2,1]]", "expected": "4"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 22,
+    "fields": {
+      "title": "Երկու Տեսակավորված Զանգվածների Մեդիանը",
+      "slug": "median-two-sorted-arrays",
+      "topic": "Տեսակավորում և Որոնում",
+      "difficulty": "Hard",
+      "description": "<p>Տրված են երկու տեսակավորված զանգվածներ՝ <b>nums1</b> և <b>nums2</b>: Գտեք դրանց միացյալ զանգվածի մեդիանը: Ալգորիթմի ժամանակային բարդությունը պետք է լինի <b>O(log(m+n))</b>:</p>",
+      "constraints": "<ul><li>0 <= m, n <= 1000</li></ul>",
+      "starter_code": "def solve(nums1, nums2):\n    pass",
+      "test_cases": [
+        {"inputs": "[1,3], [2]", "expected": "2.0"},
+        {"inputs": "[1,2], [3,4]", "expected": "2.5"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 23,
+    "fields": {
+      "title": "Առաջին Բացակայող Դրական Թիվը",
+      "slug": "first-missing-positive",
+      "topic": "Տեսակավորում և Որոնում",
+      "difficulty": "Hard",
+      "description": "<p>Տրված է չտեսակավորված ամբողջ թվերի զանգված: Գտեք ամենափոքր բացակայող դրական ամբողջ թիվը: Ալգորիթմը պետք է աշխատի <b>O(n)</b> ժամանակում և օգտագործի հաստատուն լրացուցիչ հիշողություն:</p>",
+      "constraints": "<ul><li>1 <= nums.length <= 10^5</li></ul>",
+      "starter_code": "def solve(nums):\n    pass",
+      "test_cases": [
+        {"inputs": "[1,2,0]", "expected": "3"},
+        {"inputs": "[3,4,-1,1]", "expected": "2"},
+        {"inputs": "[7,8,9,11,12]", "expected": "1"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 24,
+    "fields": {
+      "title": "Մաքսիմալ Կետերը Ուղղի Վրա",
+      "slug": "max-points-on-a-line",
+      "topic": "Մաթեմատիկա",
+      "difficulty": "Hard",
+      "description": "<p>Տրված է <b>points</b> զանգվածը, որտեղ points[i] = [xi, yi] ներկայացնում է կետը X-Y հարթության վրա: Վերադարձրեք կետերի առավելագույն քանակը, որոնք գտնվում են միևնույն ուղղի վրա:</p>",
+      "constraints": "<ul><li>1 <= points.length <= 300</li></ul>",
+      "starter_code": "def solve(points):\n    pass",
+      "test_cases": [
+        {"inputs": "[[1,1],[2,2],[3,3]]", "expected": "3"},
+        {"inputs": "[[1,1],[3,2],[5,3],[4,1],[2,3],[1,4]]", "expected": "4"}
+      ]
+    }
+  },
+  {
+    "model": "algorithms.problem",
+    "pk": 25,
+    "fields": {
+      "title": "Թիվը Տեքստային Տեսքով (English Words)",
+      "slug": "integer-to-english",
+      "topic": "Մաթեմատիկա",
+      "difficulty": "Hard",
+      "description": "<p>Փոխակերպեք ոչ բացասական ամբողջ թիվը իր տեքստային անգլերեն ներկայացմանը:</p><p><strong>Օրինակ:</strong> 123 -> \"One Hundred Twenty Three\"</p>",
+      "constraints": "<ul><li>0 <= n <= 2^31 - 1</li></ul>",
+      "starter_code": "def solve(num):\n    pass",
+      "test_cases": [
+        {"inputs": "123", "expected": "\"One Hundred Twenty Three\""},
+        {"inputs": "12345", "expected": "\"Twelve Thousand Three Hundred Forty Five\""},
+        {"inputs": "1000000", "expected": "\"One Million\""}
+      ]
+    }
+  }
+]
+

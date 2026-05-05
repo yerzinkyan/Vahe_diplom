@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
-from .models import Algorithm, CalculationHistory
+from .models import Algorithm, CalculationHistory, Problem, SolvedProblem
 
 @admin.register(Algorithm)
 class AlgorithmAdmin(admin.ModelAdmin):
@@ -40,3 +40,14 @@ class CalculationHistoryAdmin(admin.ModelAdmin):
 admin.site.site_header = "Գիտական Լաբորատորիա | Control Panel"
 admin.site.site_title = "Admin"
 admin.site.index_title = "Նախագծի Կառավարում"
+
+@admin.register(Problem)
+class ProblemAdmin(admin.ModelAdmin):
+    list_display = ('title', 'difficulty', 'slug')
+    prepopulated_fields = {'slug': ('title',)}
+
+@admin.register(SolvedProblem)
+class SolvedProblemAdmin(admin.ModelAdmin):
+    list_display = ('user', 'problem', 'solved_at')
+    search_fields = ('user__username', 'problem__title')
+    list_filter = ('solved_at',)
