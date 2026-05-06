@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import UserProfile from './UserProfile';
+import './CodeWorkspace.css'; // ՆՈՐ CSS ՖԱՅԼԻ ՄԻԱՑՈՒՄ
 
 export default function CodeWorkspace({ dark }) {
   const [problems, setProblems] = useState([]);
@@ -21,7 +22,9 @@ export default function CodeWorkspace({ dark }) {
   useEffect(() => {
     const initialize = async () => {
       try {
-        const authRes = await fetch('http://127.0.0.1:8000/api/check-auth/', { credentials: 'include' });
+        const authRes = await fetch('http://127.0.0.1:8000/api/check-auth/', { 
+          credentials: 'include' 
+        });
         const authData = await authRes.json();
         
         if (authData.is_authenticated) {
@@ -39,7 +42,9 @@ export default function CodeWorkspace({ dark }) {
 
   const fetchProblems = async (currentProblemId = null) => {
     try {
-      const res = await fetch('http://127.0.0.1:8000/api/problems/', { credentials: 'include' });
+      const res = await fetch('http://127.0.0.1:8000/api/problems/', { 
+        credentials: 'include' 
+      });
       const data = await res.json();
       setProblems(data);
       
@@ -64,6 +69,7 @@ export default function CodeWorkspace({ dark }) {
 
   const handleRunCode = async () => {
     if (!selectedProblem) return;
+    
     setIsRunning(true);
     setOutput('Աշխատում է...');
     
@@ -72,14 +78,20 @@ export default function CodeWorkspace({ dark }) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ code: code, problem_slug: selectedProblem.slug })
+        body: JSON.stringify({ 
+          code: code, 
+          problem_slug: selectedProblem.slug 
+        })
       });
       const data = await res.json();
       
       if (data.status === 'success') {
         setOutput(`${data.output}\n\n[📊 ՉԱՓԱԳՐՈՒՄ]\n⏱ Ժամանակ: ${data.time_ms} ms\n💾 Հիշողություն: ${data.memory_kb} KB`);
+        
         if (data.output.includes("ԲԱՐԵՀԱՋՈՂ ԱՆՑԱՆ")) {
-          setProblems(prev => prev.map(p => p.id === selectedProblem.id ? { ...p, is_solved: true, saved_code: code } : p));
+          setProblems(prev => prev.map(p => 
+            p.id === selectedProblem.id ? { ...p, is_solved: true, saved_code: code } : p
+          ));
           setSelectedProblem(prev => ({ ...prev, is_solved: true, saved_code: code }));
         }
       } else {
@@ -88,12 +100,14 @@ export default function CodeWorkspace({ dark }) {
     } catch (err) {
       setOutput('❌ Սերվերի հետ կապի խափանում:');
     }
+    
     setIsRunning(false);
   };
 
   const handleAuthSubmit = async (e, type) => {
     e.preventDefault();
     const endpoint = type === 'login' ? 'api/login/' : 'api/register/';
+    
     try {
       const res = await fetch(`http://127.0.0.1:8000/${endpoint}`, {
         method: 'POST',
@@ -147,80 +161,130 @@ export default function CodeWorkspace({ dark }) {
   }, {});
 
   return (
-    <div className="fade-in" style={{ maxWidth: '1250px', margin: '20px auto', minHeight: 'calc(100vh - 120px)', display: 'flex', flexDirection: 'column', gap: '30px', position: 'relative' }}>
+    <div className="fade-in cw-container">
       
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: panelBg, padding: '20px 30px', borderRadius: '16px', border: `1px solid ${borderColor}`, boxShadow: '0 4px 20px rgba(0,0,0,0.04)' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '25px' }}>
-            <h2 style={{ margin: 0, color: textColor, fontSize: '22px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <span style={{ fontSize: '26px' }}>🧪</span> Լաբորատորիա
-            </h2>
+      {/* Header */}
+      <div className="cw-header" style={{ background: panelBg, border: `1px solid ${borderColor}` }}>
+        <div className="cw-header-left">
+          <h2 className="cw-title" style={{ color: textColor }}>
+            <span className="cw-title-icon">🧪</span> Լաբորատորիա
+          </h2>
 
-            <div style={{ display: 'flex', gap: '10px', marginLeft: '20px', background: dark ? '#0f172a' : '#f1f5f9', padding: '5px', borderRadius: '12px', marginRight: '15px' }}>
-              <button 
-                onClick={() => setActivePage('lab')}
-                style={{ padding: '8px 15px', borderRadius: '8px', border: 'none', background: activePage === 'lab' ? '#3b82f6' : 'transparent', color: activePage === 'lab' ? 'white' : '#64748b', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s'}}
-              >
-                💻 Կոդավորում
-              </button>
-              <button 
-                onClick={() => setActivePage('profile')}
-                style={{ padding: '8px 15px', borderRadius: '8px', border: 'none', background: activePage === 'profile' ? '#3b82f6' : 'transparent', color: activePage === 'profile' ? 'white' : '#64748b', fontWeight: 'bold', cursor: 'pointer', transition: '0.2s' }}
-              >
-                👤 Իմ Պրոֆիլը
-              </button>
-            </div>
+          <div className="cw-nav-group" style={{ background: dark ? '#0f172a' : '#f1f5f9' }}>
+            <button 
+              className="cw-nav-btn"
+              onClick={() => setActivePage('lab')}
+              style={{ 
+                background: activePage === 'lab' ? '#3b82f6' : 'transparent', 
+                color: activePage === 'lab' ? 'white' : '#64748b'
+              }}
+            >
+              💻 Կոդավորում
+            </button>
+            <button 
+              className="cw-nav-btn"
+              onClick={() => setActivePage('profile')}
+              style={{ 
+                background: activePage === 'profile' ? '#3b82f6' : 'transparent', 
+                color: activePage === 'profile' ? 'white' : '#64748b'
+              }}
+            >
+              👤 Իմ Պրոֆիլը
+            </button>
+          </div>
         </div>
         
-        <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
-            {activePage === 'lab' && (
-              <select 
-                  className="input-box" 
-                  value={selectedProblem?.id || ''}
-                  onChange={(e) => handleSelectProblem(problems.find(p => p.id === parseInt(e.target.value)))}
-                  style={{ width: '280px', padding: '10px 15px', borderRadius: '10px', background: dark ? '#0f172a' : '#f8fafc', color: textColor, border: `1px solid ${borderColor}`, fontWeight: '600', fontSize: '14px', cursor: 'pointer' }}
-              >
-                  {Object.entries(groupedProblems).map(([name, list]) => (
-                      <optgroup key={name} label={`📂 ${name}`}>
-                          {list.map(p => (
-                              <option key={p.id} value={p.id}>{p.is_solved ? '✅' : '📄'} &nbsp;{p.title}</option>
-                          ))}
-                      </optgroup>
+        <div className="cw-header-right">
+          {activePage === 'lab' && (
+            <select 
+              className="input-box cw-select" 
+              value={selectedProblem?.id || ''}
+              onChange={(e) => handleSelectProblem(problems.find(p => p.id === parseInt(e.target.value)))}
+              style={{ 
+                background: dark ? '#0f172a' : '#f8fafc', 
+                color: textColor, 
+                border: `1px solid ${borderColor}`
+              }}
+            >
+              {Object.entries(groupedProblems).map(([name, list]) => (
+                <optgroup key={name} label={`📂 ${name}`}>
+                  {list.map(p => (
+                    <option key={p.id} value={p.id}>
+                      {p.is_solved ? '✅' : '📄'} &nbsp;{p.title}
+                    </option>
                   ))}
-              </select>
-            )}
+                </optgroup>
+              ))}
+            </select>
+          )}
 
-            {user ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '15px', background: dark ? '#0f172a' : '#f1f5f9', padding: '6px 15px', borderRadius: '10px', border: `1px solid ${borderColor}` }}>
-                    <span style={{ color: '#10b981', fontWeight: 'bold', fontSize: '14px' }}>{user}</span>
-                    <button onClick={handleLogout} style={{ background: 'transparent', border: 'none', color: '#ef4444', cursor: 'pointer', fontWeight: 'bold' }}>Ելք</button>
-                </div>
-            ) : (
-                <button onClick={() => {setShowAuthModal(true); setAuthStep('choice');}} style={{ background: '#3b82f6', color: 'white', border: 'none', padding: '10px 20px', borderRadius: '10px', cursor: 'pointer', fontWeight: 'bold' }}>Մուտք</button>
-            )}
+          {user ? (
+            <div className="cw-user-badge" style={{ background: dark ? '#0f172a' : '#f1f5f9', border: `1px solid ${borderColor}` }}>
+              <span className="cw-user-name">{user}</span>
+              <button className="cw-logout-btn" onClick={handleLogout}>Ելք</button>
+            </div>
+          ) : (
+            <button 
+              className="cw-login-btn"
+              onClick={() => {
+                setShowAuthModal(true); 
+                setAuthStep('choice');
+              }} 
+            >
+              Մուտք
+            </button>
+          )}
 
-            {activePage === 'lab' && (
-              <button className="btn-main" onClick={handleRunCode} disabled={isRunning} style={{ background: isRunning ? '#64748b' : '#10b981', padding: '10px 25px', borderRadius: '10px', border: 'none', color: 'white', fontWeight: 'bold', cursor: isRunning ? 'not-allowed' : 'pointer', boxShadow: '0 4px 12px rgba(16, 185, 129, 0.3)' }}>
-                  {isRunning ? '⏱...' : '▶ Գործարկել'}
-              </button>
-            )}
+          {activePage === 'lab' && (
+            <button 
+              className="cw-run-btn" 
+              onClick={handleRunCode} 
+              disabled={isRunning} 
+              style={{ background: isRunning ? '#64748b' : '#10b981' }}
+            >
+              {isRunning ? '⏱...' : '▶ Գործարկել'}
+            </button>
+          )}
         </div>
       </div>
 
-      <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
+      <div className="cw-main-area">
         {activePage === 'lab' ? (
-          <div style={{ display: 'flex', gap: '30px', flex: 1, overflow: 'hidden' }}>
-            <div style={{ flex: '1.2', background: panelBg, borderRadius: '16px', border: `1px solid ${borderColor}`, display: 'flex', flexDirection: 'column', overflow: 'hidden', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-              <div style={{ display: 'flex', background: dark ? '#0f172a' : '#f8fafc', borderBottom: `1px solid ${borderColor}` }}>
-                <button onClick={() => setActiveTab('description')} style={{ flex: 1, padding: '15px', border: 'none', background: activeTab === 'description' ? panelBg : 'transparent', color: activeTab === 'description' ? '#3b82f6' : '#64748b', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer', borderBottom: activeTab === 'description' ? '2px solid #3b82f6' : '2px solid transparent' }}>📝 Նկարագրություն</button>
-                <button onClick={() => setActiveTab('testcases')} style={{ flex: 1, padding: '15px', border: 'none', background: activeTab === 'testcases' ? panelBg : 'transparent', color: activeTab === 'testcases' ? '#3b82f6' : '#64748b', fontWeight: 'bold', fontSize: '15px', cursor: 'pointer', borderBottom: activeTab === 'testcases' ? '2px solid #3b82f6' : '2px solid transparent' }}>🔍 Թեստեր ({selectedProblem?.test_cases?.length || 0})</button>
+          <div className="cw-lab-grid">
+            
+            {/* Left Panel */}
+            <div className="cw-left-panel" style={{ background: panelBg, border: `1px solid ${borderColor}` }}>
+              <div className="cw-tabs-header" style={{ background: dark ? '#0f172a' : '#f8fafc', borderBottom: `1px solid ${borderColor}` }}>
+                <button 
+                  className="cw-tab-btn"
+                  onClick={() => setActiveTab('description')} 
+                  style={{ 
+                    background: activeTab === 'description' ? panelBg : 'transparent', 
+                    color: activeTab === 'description' ? '#3b82f6' : '#64748b', 
+                    borderBottom: activeTab === 'description' ? '2px solid #3b82f6' : '2px solid transparent' 
+                  }}
+                >
+                  📝 Նկարագրություն
+                </button>
+                <button 
+                  className="cw-tab-btn"
+                  onClick={() => setActiveTab('testcases')} 
+                  style={{ 
+                    background: activeTab === 'testcases' ? panelBg : 'transparent', 
+                    color: activeTab === 'testcases' ? '#3b82f6' : '#64748b', 
+                    borderBottom: activeTab === 'testcases' ? '2px solid #3b82f6' : '2px solid transparent' 
+                  }}
+                >
+                  🔍 Թեստեր ({selectedProblem?.test_cases?.length || 0})
+                </button>
               </div>
 
-              <div style={{ padding: '25px', overflowY: 'auto', overflowX: 'hidden', flex: 1 }}>
+              <div className="cw-panel-content">
                 {selectedProblem ? (
                   activeTab === 'description' ? (
-                    <div className="problem-description" style={{ textAlign: 'left', lineHeight: '1.7', fontSize: '16px', color: textColor }}>
+                    <div className="cw-problem-desc" style={{ color: textColor }}>
                       <style>{`
-                        .problem-description pre {
+                        .cw-problem-desc pre {
                             white-space: pre-wrap !important;
                             word-break: break-word !important;
                             background-color: ${dark ? '#0f172a' : '#f8fafc'} !important;
@@ -230,48 +294,82 @@ export default function CodeWorkspace({ dark }) {
                             font-family: monospace;
                         }
                       `}</style>
-                      <h2 style={{ marginTop: 0, marginBottom: '20px', borderBottom: `1px solid ${borderColor}`, paddingBottom: '15px' }}>{selectedProblem.title}</h2>
+                      <h2 className="cw-problem-title" style={{ borderBottom: `1px solid ${borderColor}` }}>
+                        {selectedProblem.title}
+                      </h2>
                       <div dangerouslySetInnerHTML={{ __html: selectedProblem.description }} />
-                      <div style={{ marginTop: '30px', background: dark ? '#0f172a' : '#f1f5f9', padding: '20px', borderRadius: '12px', border: `1px solid ${borderColor}` }}>
-                        <h4 style={{ margin: '0 0 10px 0' }}>⚠️ Սահմանափակումներ:</h4>
-                        <div style={{ fontFamily: 'monospace' }} dangerouslySetInnerHTML={{ __html: selectedProblem.constraints }} />
+                      
+                      <div className="cw-constraints-box" style={{ background: dark ? '#0f172a' : '#f1f5f9', border: `1px solid ${borderColor}` }}>
+                        <h4 className="cw-constraints-title">⚠️ Սահմանափակումներ:</h4>
+                        <div className="cw-constraints-code" dangerouslySetInnerHTML={{ __html: selectedProblem.constraints }} />
                       </div>
                     </div>
                   ) : (
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
-                      <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
+                    <div className="cw-tests-container">
+                      <div className="cw-test-buttons">
                         {selectedProblem.test_cases.map((_, idx) => (
-                          <button key={idx} onClick={() => setActiveTestIndex(idx)} style={{ padding: '8px 16px', borderRadius: '8px', border: `1px solid ${activeTestIndex === idx ? '#3b82f6' : borderColor}`, background: activeTestIndex === idx ? '#3b82f615' : 'transparent', color: activeTestIndex === idx ? '#3b82f6' : '#64748b', fontWeight: 'bold', cursor: 'pointer' }}>Թեստ {idx + 1}</button>
+                          <button 
+                            key={idx} 
+                            className="cw-test-btn"
+                            onClick={() => setActiveTestIndex(idx)} 
+                            style={{ 
+                              border: `1px solid ${activeTestIndex === idx ? '#3b82f6' : borderColor}`, 
+                              background: activeTestIndex === idx ? '#3b82f615' : 'transparent', 
+                              color: activeTestIndex === idx ? '#3b82f6' : '#64748b'
+                            }}
+                          >
+                            Թեստ {idx + 1}
+                          </button>
                         ))}
                       </div>
-                      <div style={{ background: dark ? '#0f172a' : '#f8fafc', padding: '20px', borderRadius: '12px', border: `1px solid ${borderColor}` }}>
-                        <div style={{ marginBottom: '15px' }}>
-                          <span style={{ color: '#64748b', fontSize: '12px', fontWeight: 'bold' }}>ՄՈՒՏՔ (INPUT):</span>
-                          <pre style={{ margin: '5px 0', padding: '12px', background: dark ? '#1e293b' : 'white', borderRadius: '8px', border: `1px solid ${borderColor}`, whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{selectedProblem.test_cases[activeTestIndex].inputs}</pre>
+                      
+                      <div className="cw-test-details" style={{ background: dark ? '#0f172a' : '#f8fafc', border: `1px solid ${borderColor}` }}>
+                        <div>
+                          <span className="cw-test-label">ՄՈՒՏՔ (INPUT):</span>
+                          <pre className="cw-test-pre" style={{ background: dark ? '#1e293b' : 'white', border: `1px solid ${borderColor}` }}>
+                            {selectedProblem.test_cases[activeTestIndex].inputs}
+                          </pre>
                         </div>
                         <div>
-                          <span style={{ color: '#64748b', fontSize: '12px', fontWeight: 'bold' }}>ՍՊԱՍՎՈՂ (EXPECTED):</span>
-                          <pre style={{ margin: '5px 0', padding: '12px', background: dark ? '#1e293b' : '#ecfdf5', borderRadius: '8px', color: '#10b981', border: '1px solid #10b98144', whiteSpace: 'pre-wrap', wordBreak: 'break-all' }}>{selectedProblem.test_cases[activeTestIndex].expected}</pre>
+                          <span className="cw-test-label">ՍՊԱՍՎՈՂ (EXPECTED):</span>
+                          <pre className="cw-test-pre expected" style={{ background: dark ? '#1e293b' : '#ecfdf5' }}>
+                            {selectedProblem.test_cases[activeTestIndex].expected}
+                          </pre>
                         </div>
                       </div>
                     </div>
                   )
-                ) : <div style={{ textAlign: 'center', marginTop: '50px' }}>Ընտրեք խնդիր...</div>}
+                ) : (
+                  <div className="cw-empty-state">Ընտրեք խնդիր...</div>
+                )}
               </div>
             </div>
 
-            <div style={{ flex: '1.8', display: 'flex', flexDirection: 'column', gap: '20px' }}>
-              <div style={{ flex: '1.4', background: panelBg, borderRadius: '16px', border: `1px solid ${borderColor}`, overflow: 'hidden', display: 'flex', flexDirection: 'column', boxShadow: '0 4px 20px rgba(0,0,0,0.03)' }}>
-                <div style={{ padding: '10px 20px', borderBottom: `1px solid ${borderColor}`, background: dark ? '#0f172a' : '#f8fafc', display: 'flex', gap: '8px' }}>
-                  <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ff5f56' }}></span>
-                  <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#ffbd2e' }}></span>
-                  <span style={{ width: '12px', height: '12px', borderRadius: '50%', background: '#27c93f' }}></span>
+            {/* Right Panel */}
+            <div className="cw-right-panel">
+              <div className="cw-editor-container" style={{ background: panelBg, border: `1px solid ${borderColor}` }}>
+                <div className="cw-panel-top-bar" style={{ borderBottom: `1px solid ${borderColor}`, background: dark ? '#0f172a' : '#f8fafc' }}>
+                  <span className="cw-mac-dot red"></span>
+                  <span className="cw-mac-dot yellow"></span>
+                  <span className="cw-mac-dot green"></span>
                 </div>
-                <Editor height="100%" language="python" theme={dark ? 'vs-dark' : 'light'} value={code} onChange={(v) => setCode(v)} options={{ fontSize: 16, minimap: { enabled: false } }} />
+                <Editor 
+                  height="100%" 
+                  language="python" 
+                  theme={dark ? 'vs-dark' : 'light'} 
+                  value={code} 
+                  onChange={(v) => setCode(v)} 
+                  options={{ fontSize: 16, minimap: { enabled: false } }} 
+                />
               </div>
-              <div style={{ flex: '1', minHeight: '250px', background: panelBg, borderRadius: '16px', border: `1px solid ${borderColor}`, display: 'flex', flexDirection: 'column', overflow: 'hidden' }}>
-                <div style={{ padding: '10px 20px', borderBottom: `1px solid ${borderColor}`, background: dark ? '#0f172a' : '#f8fafc', fontWeight: 'bold', fontSize: '13px', color: '#64748b' }}>⌨️ Տերմինալ</div>
-                <div style={{ flex: '1', padding: '20px', background: '#0f172a', color: '#38bdf8', fontFamily: 'monospace', overflowY: 'auto', whiteSpace: 'pre-wrap' }}>{output || '> Սպասում է...'}</div>
+              
+              <div className="cw-terminal-container" style={{ background: panelBg, border: `1px solid ${borderColor}` }}>
+                <div className="cw-terminal-header" style={{ borderBottom: `1px solid ${borderColor}`, background: dark ? '#0f172a' : '#f8fafc' }}>
+                  ⌨️ Տերմինալ
+                </div>
+                <div className="cw-terminal-output">
+                  {output || '> Սպասում է...'}
+                </div>
               </div>
             </div>
           </div>
@@ -280,24 +378,43 @@ export default function CodeWorkspace({ dark }) {
         )}
       </div>
 
+      {/* Auth Modal */}
       {showAuthModal && (
-        <div style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0,0,0,0.6)', backdropFilter: 'blur(4px)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }}>
-          <div style={{ background: panelBg, padding: '40px', borderRadius: '20px', width: '350px', border: `1px solid ${borderColor}`, boxShadow: '0 10px 30px rgba(0,0,0,0.3)' }}>
-            <h2 style={{ textAlign: 'center', color: textColor }}>{authStep === 'choice' ? 'Բարի գալուստ 👋' : (authStep === 'login' ? 'Մուտք' : 'Գրանցում')}</h2>
+        <div className="cw-modal-overlay">
+          <div className="cw-modal-content" style={{ background: panelBg, border: `1px solid ${borderColor}` }}>
+            <h2 className="cw-modal-title" style={{ color: textColor }}>
+              {authStep === 'choice' ? 'Բարի գալուստ 👋' : (authStep === 'login' ? 'Մուտք' : 'Գրանցում')}
+            </h2>
+            
             {authStep === 'choice' ? (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
-                <button onClick={() => setAuthStep('login')} style={{ padding: '12px', borderRadius: '10px', border: 'none', background: '#3b82f6', color: 'white', fontWeight: 'bold', cursor: 'pointer' }}>Մուտք</button>
-                <button onClick={() => setAuthStep('register')} style={{ padding: '12px', borderRadius: '10px', border: `2px solid #3b82f6`, background: 'transparent', color: '#3b82f6', fontWeight: 'bold', cursor: 'pointer' }}>Գրանցվել</button>
-                <button onClick={() => setShowAuthModal(false)} style={{ padding: '10px', background: 'transparent', border: 'none', color: '#64748b', cursor: 'pointer' }}>Շարունակել որպես հյուր</button>
+              <div className="cw-auth-choices">
+                <button className="cw-auth-btn-primary" onClick={() => setAuthStep('login')}>Մուտք</button>
+                <button className="cw-auth-btn-outline" onClick={() => setAuthStep('register')}>Գրանցվել</button>
+                <button className="cw-auth-btn-ghost" onClick={() => setShowAuthModal(false)}>Շարունակել որպես հյուր</button>
               </div>
             ) : (
-              <form onSubmit={(e) => handleAuthSubmit(e, authStep)} style={{ display: 'flex', flexDirection: 'column', gap: '15px', marginTop: '20px' }}>
-                <input type="text" placeholder="Մուտքանուն" value={authForm.username} onChange={(e) => setAuthForm({...authForm, username: e.target.value})} style={{ padding: '12px', borderRadius: '8px', border: `1px solid ${borderColor}`, background: dark ? '#0f172a' : 'white', color: textColor }} required />
-                <input type="password" placeholder="Գաղտնաբառ" value={authForm.password} onChange={(e) => setAuthForm({...authForm, password: e.target.value})} style={{ padding: '12px', borderRadius: '8px', border: `1px solid ${borderColor}`, background: dark ? '#0f172a' : 'white', color: textColor }} required />
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  {/* ԱՅՍՏԵՂ ԱՎԵԼԱՑՐԻՆՔ CURSOR: POINTER */}
-                  <button type="button" onClick={() => setAuthStep('choice')} style={{ flex: 1, padding: '12px', borderRadius: '8px', background: '#64748b', color: 'white', border: 'none', cursor: 'pointer' }}>Հետ</button>
-                  <button type="submit" style={{ flex: 1, padding: '12px', borderRadius: '8px', background: '#10b981', color: 'white', border: 'none', fontWeight: 'bold', cursor: 'pointer' }}>{authStep === 'login' ? 'Մտնել' : 'Գրանցվել'}</button>
+              <form className="cw-auth-form" onSubmit={(e) => handleAuthSubmit(e, authStep)}>
+                <input 
+                  type="text" 
+                  className="cw-auth-input"
+                  placeholder="Մուտքանուն" 
+                  value={authForm.username} 
+                  onChange={(e) => setAuthForm({...authForm, username: e.target.value})} 
+                  style={{ border: `1px solid ${borderColor}`, background: dark ? '#0f172a' : 'white', color: textColor }} 
+                  required 
+                />
+                <input 
+                  type="password" 
+                  className="cw-auth-input"
+                  placeholder="Գաղտնաբառ" 
+                  value={authForm.password} 
+                  onChange={(e) => setAuthForm({...authForm, password: e.target.value})} 
+                  style={{ border: `1px solid ${borderColor}`, background: dark ? '#0f172a' : 'white', color: textColor }} 
+                  required 
+                />
+                <div className="cw-auth-actions">
+                  <button type="button" className="cw-auth-back" onClick={() => setAuthStep('choice')}>Հետ</button>
+                  <button type="submit" className="cw-auth-submit">{authStep === 'login' ? 'Մտնել' : 'Գրանցվել'}</button>
                 </div>
               </form>
             )}

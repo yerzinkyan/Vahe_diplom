@@ -1,0 +1,404 @@
+/* CodeWorkspace.css */
+
+.cw-container {
+  max-width: 1250px;
+  margin: 20px auto;
+  min-height: calc(100vh - 120px);
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  position: relative;
+}
+
+/* Header */
+.cw-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px 30px;
+  border-radius: 16px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.04);
+}
+
+.cw-header-left {
+  display: flex;
+  align-items: center;
+  gap: 25px;
+}
+
+.cw-title {
+  margin: 0;
+  font-size: 22px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.cw-title-icon {
+  font-size: 26px;
+}
+
+.cw-nav-group {
+  display: flex;
+  gap: 10px;
+  margin-left: 20px;
+  padding: 5px;
+  border-radius: 12px;
+  margin-right: 15px;
+}
+
+.cw-nav-btn {
+  padding: 8px 15px;
+  border-radius: 8px;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.cw-header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+}
+
+.cw-select {
+  width: 280px;
+  padding: 10px 15px;
+  border-radius: 10px;
+  font-weight: 600;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+/* User & Auth Buttons */
+.cw-user-badge {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  padding: 6px 15px;
+  border-radius: 10px;
+}
+
+.cw-user-name {
+  color: #10b981;
+  font-weight: bold;
+  font-size: 14px;
+}
+
+.cw-logout-btn {
+  background: transparent;
+  border: none;
+  color: #ef4444;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cw-login-btn {
+  background: #3b82f6;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: bold;
+}
+
+.cw-run-btn {
+  padding: 10px 25px;
+  border-radius: 10px;
+  border: none;
+  color: white;
+  font-weight: bold;
+  box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);
+}
+
+.cw-run-btn:not(:disabled) {
+  cursor: pointer;
+}
+
+.cw-run-btn:disabled {
+  cursor: not-allowed;
+}
+
+/* Main Layout */
+.cw-main-area {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.cw-lab-grid {
+  display: flex;
+  gap: 30px;
+  flex: 1;
+  overflow: hidden;
+}
+
+/* Left Panel (Description & Tests) */
+.cw-left-panel {
+  flex: 1.2;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.cw-tabs-header {
+  display: flex;
+}
+
+.cw-tab-btn {
+  flex: 1;
+  padding: 15px;
+  border: none;
+  font-weight: bold;
+  font-size: 15px;
+  cursor: pointer;
+}
+
+.cw-panel-content {
+  padding: 25px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  flex: 1;
+}
+
+.cw-problem-desc {
+  text-align: left;
+  line-height: 1.7;
+  font-size: 16px;
+}
+
+.cw-problem-title {
+  margin-top: 0;
+  margin-bottom: 20px;
+  padding-bottom: 15px;
+}
+
+.cw-constraints-box {
+  margin-top: 30px;
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.cw-constraints-title {
+  margin: 0 0 10px 0;
+}
+
+.cw-constraints-code {
+  font-family: monospace;
+}
+
+/* Tests Tab */
+.cw-tests-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cw-test-buttons {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.cw-test-btn {
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cw-test-details {
+  padding: 20px;
+  border-radius: 12px;
+}
+
+.cw-test-label {
+  font-size: 12px;
+  font-weight: bold;
+  color: #64748b;
+  display: block;
+  margin-bottom: 5px;
+}
+
+.cw-test-pre {
+  margin: 0 0 15px 0;
+  padding: 12px;
+  border-radius: 8px;
+  white-space: pre-wrap;
+  word-break: break-all;
+}
+
+.cw-test-pre.expected {
+  color: #10b981;
+  border: 1px solid #10b98144;
+  margin-bottom: 0;
+}
+
+.cw-empty-state {
+  text-align: center;
+  margin-top: 50px;
+}
+
+/* Right Panel (Editor & Terminal) */
+.cw-right-panel {
+  flex: 1.8;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.cw-editor-container {
+  flex: 1.4;
+  border-radius: 16px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+
+.cw-panel-top-bar {
+  padding: 10px 20px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.cw-mac-dot {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+}
+
+.cw-mac-dot.red { background: #ff5f56; }
+.cw-mac-dot.yellow { background: #ffbd2e; }
+.cw-mac-dot.green { background: #27c93f; }
+
+.cw-terminal-container {
+  flex: 1;
+  min-height: 250px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.cw-terminal-header {
+  padding: 10px 20px;
+  font-weight: bold;
+  font-size: 13px;
+  color: #64748b;
+}
+
+.cw-terminal-output {
+  flex: 1;
+  padding: 20px;
+  background: #0f172a;
+  color: #38bdf8;
+  font-family: monospace;
+  overflow-y: auto;
+  white-space: pre-wrap;
+}
+
+/* Modal */
+.cw-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.6);
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.cw-modal-content {
+  padding: 40px;
+  border-radius: 20px;
+  width: 350px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+}
+
+.cw-modal-title {
+  text-align: center;
+  margin-top: 0;
+}
+
+.cw-auth-choices {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.cw-auth-btn-primary {
+  padding: 12px;
+  border-radius: 10px;
+  border: none;
+  background: #3b82f6;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cw-auth-btn-outline {
+  padding: 12px;
+  border-radius: 10px;
+  border: 2px solid #3b82f6;
+  background: transparent;
+  color: #3b82f6;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.cw-auth-btn-ghost {
+  padding: 10px;
+  background: transparent;
+  border: none;
+  color: #64748b;
+  cursor: pointer;
+}
+
+.cw-auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.cw-auth-input {
+  padding: 12px;
+  border-radius: 8px;
+}
+
+.cw-auth-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cw-auth-back {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  background: #64748b;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.cw-auth-submit {
+  flex: 1;
+  padding: 12px;
+  border-radius: 8px;
+  background: #10b981;
+  color: white;
+  border: none;
+  font-weight: bold;
+  cursor: pointer;
+}

@@ -106,20 +106,23 @@ def combinations_api(request):
 
 def get_algorithm_history(request, slug):
     history_records = CalculationHistory.objects.filter(algorithm__slug=slug)
-    
     data = []
     for record in history_records:
-        n_val = record.input_data.get('n')
+        # Վերցնում ենք n-ը, եթե չկա՝ a-ն, եթե դա էլ չկա՝ առաջին պատահած թիվը[cite: 6, 7]
+        n_val = record.input_data.get('n') or record.input_data.get('a') or list(record.input_data.values())[0]
         
-        if n_val is not None:
+        try:
             data.append({
                 "n": int(n_val),
                 "Օպտիմալ": record.time_fast_ms,
-                "Ոչ Օպտիմալ": record.time_slow_ms if record.time_slow_ms and record.time_slow_ms > 0 else None
+                # Ստուգում ենք, որ 0 չլինի, որպեսզի գրաֆիկում կետը երևա[cite: 1, 6]
+                "Ոչ Օպտիմալ": record.time_slow_ms if record.time_slow_ms > 0 else None
             })
+        except (ValueError, TypeError, IndexError):
+            continue
+            
     data = sorted(data, key=lambda x: x['n'])
     unique_data = {item['n']: item for item in data}.values()
-
     return JsonResponse(list(unique_data), safe=False)
 
 @csrf_exempt
