@@ -334,7 +334,7 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
       testValues = [1000, 3000, 5000, 7000, 9000, 11000, 13000, 15000];
     } else {
       const limit = parseInt(inputs.n) || 15;
-      const maxLimit = Math.min(limit, 30);
+      const maxLimit = Math.min(limit, 100);
       for (let i = 1; i <= maxLimit; i++) testValues.push(i);
     }
 
@@ -517,7 +517,7 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
                   <span style={{fontSize: '12px', fontWeight: 700, color: algoInfo.colors.opt}}>
                     Հաշվարկվում է... {benchmarkProgress}/{benchmarkTotal}
                   </span>
-                  <button className="btn-main stop-btn" onClick={() => window.stopNow = true} style={{padding: '8px 16px', fontSize: '13px'}}>🛑 Կանգ</button>
+                  {/* <button className="btn-main stop-btn" onClick={() => window.stopNow = true} style={{padding: '8px 16px', fontSize: '13px'}}>🛑 Կանգ</button> */}
                 </div>
                 <ProgressBar progress={progressPct} color={algoInfo.colors.opt} dark={dark} />
               </div>
