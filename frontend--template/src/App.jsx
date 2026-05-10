@@ -4,60 +4,72 @@ import {
   XAxis, YAxis, CartesianGrid, Tooltip, Legend 
 } from 'recharts';
 import { generateRandomChallenge } from './challengeBank';
-import './App_design.css'; // ՆՈՐ CSS ՖԱՅԼԻ ՄԻԱՑՈՒՄ
+import './App_design.css';
 import CodeWorkspace from './CodeWorkspace'; 
 
 const ALGORITHMS_DATA = {
   knapsack: { 
-    id: 'knapsack', title: 'Օպտիմիզացիա', icon: '🎒', desc: 'Knapsack Problem (DP)', inputs: [], chartType: 'none', colors: { opt: '#4f46e5', slow: '#94a3b8' }, complexity: { fast: 'O(NW)', slow: 'O(2ⁿ)' }, viewKey: 'allocator' 
+    id: 'knapsack', title: 'Օպտիմիզացիա', icon: '🎒', desc: 'Knapsack Problem (DP)', inputs: [], chartType: 'none', colors: { opt: '#4f46e5', slow: '#94a3b8' }, complexity: { fast: 'O(NW)', slow: 'O(2ⁿ)' }, viewKey: 'allocator'
   },
   fibonacci: { 
     id: 'fibonacci', title: 'Ֆիբոնաչի', icon: '🌀', desc: 'Ոսկե հատում vs Ռեկուրսիա', inputs: ['n'], chartType: 'line', colors: { opt: '#10b981', slow: '#ef4444' }, complexity: { fast: 'O(1)', slow: 'O(2ⁿ)' },
+    theory: 'Տեսական ակնարկ: Ֆիբոնաչիի հաջորդականությունը մաթեմատիկական շարք է, որտեղ յուրաքանչյուր հաջորդ թիվ հավասար է իր նախորդ երկու թվերի գումարին (F_n = F_{n-1} + F_{n-2}): Այս հաջորդականությունը սերտորեն կապված է «Ոսկե հատման» (Golden Ratio) հետ և լայնորեն հանդիպում է բնության մեջ, ճարտարապետությունում ու կենսաբանական համակարգերում (օրինակ՝ ծառերի ճյուղավորումները կամ արևածաղկի սերմերի դասավորվածությունը): Համակարգչային գիտություններում այն դասական օրինակ է՝ ռեկուրսիայի և դինամիկ ծրագրավորման տարբերությունները ցուցադրելու համար:'
   },
   factorial: { 
     id: 'factorial', title: 'Ֆակտորիալ', icon: '❗', desc: 'Loop vs Recursion', inputs: ['n'], chartType: 'bar', colors: { opt: '#3b82f6', slow: '#f97316' }, complexity: { fast: 'O(n)', slow: 'O(n)' },
+    theory: 'Տեսական ակնարկ: Ֆակտորիալը (նշանակվում է n!) 1-ից մինչև n բոլոր բնական թվերի արտադրյալն է: Այն կոմբինատորիկայի հիմնաքարերից է, որն օգտագործվում է տեղափոխությունների և զուգորդությունների քանակը հաշվելու համար: Ծրագրավորման մեջ ֆակտորիալի հաշվարկը հաճախ ծառայում է որպես ռեկուրսիվ և իտերատիվ (ցիկլային) պրոցեսների համեմատման դասական օրինակ, քանի որ մեծ թվերի դեպքում ոչ օպտիմալ մոտեցումը արագորեն հանգեցնում է հիշողության գերբեռնվածության (Stack Overflow):'
   },
   combinations: { 
     id: 'combinations', title: 'Զուգորդություն', icon: '🎲', desc: 'Բանաձև vs Պասկալի եռանկյուն', inputs: ['n', 'k'], chartType: 'area', colors: { opt: '#8b5cf6', slow: '#ec4899' }, complexity: { fast: 'O(k)', slow: 'O(2ⁿ)' },
+    theory: 'Տեսական ակնարկ: Զուգորդությունը ցույց է տալիս, թե քանի եղանակով է հնարավոր n տարր պարունակող բազմությունից ընտրել k հատ տարր, որտեղ ընտրության հերթականությունը նշանակություն չունի (ի տարբերություն կարգավորությունների): Մաթեմատիկորեն այն արտահայտվում է C(n, k) բանաձևով կամ Պասկալի եռանկյան միջոցով: Լայնորեն կիրառվում է վիճակագրության, հավանականությունների տեսության և գենետիկական ալգորիթմների մեջ:'
   },
   sorting: { 
     id: 'sorting', title: 'Տեսակավորում', icon: '📊', desc: 'Quick Sort vs Bubble Sort', inputs: ['n'], chartType: 'bar', colors: { opt: '#06b6d4', slow: '#f43f5e' }, complexity: { fast: 'O(n log n)', slow: 'O(n²)' },
+    theory: 'Տեսական ակնարկ: Տեսակավորումը համակարգչային գիտության ամենակարևոր գործընթացներից մեկն է, որի նպատակն է զանգվածի տարրերը դասավորել աճման կամ նվազման կարգով: Այն անհրաժեշտ է տվյալների արագ որոնման և վերլուծության համար: Պարզագույն ալգորիթմները (օրինակ՝ պղպջակային տեսակավորումը) կատարում են ավելորդ համեմատություններ, մինչդեռ օպտիմիզացված տարբերակները (Quick Sort, Timsort) կիրառում են «բաժանիր և տիրիր» սկզբունքը՝ խնայելով հսկայական հաշվողական ռեսուրսներ:'
   },
   gcd: { 
     id: 'gcd', title: 'ՀԱԲ (GCD)', icon: '➗', desc: 'Էվկլիդես vs Գծային որոնում', inputs: ['a', 'b'], chartType: 'line', colors: { opt: '#10b981', slow: '#f59e0b' }, complexity: { fast: 'O(log n)', slow: 'O(n)' },
+    theory: 'Տեսական ակնարկ: Ամենամեծ ընդհանուր բաժանարարը (ԱԸԲ) այն ամենամեծ դրական ամբողջ թիվն է, որի վրա առանց մնացորդի բաժանվում են տրված երկու կամ ավելի ամբողջ թվերը: Այն թվերի տեսության հիմնարար հասկացություններից է, որն ունի կրիտիկական նշանակություն կոտորակների պարզեցման, կրիպտոգրաֆիայի (գաղտնագրության, օրինակ՝ RSA ալգորիթմում) և հաշվողական համակարգերում ցիկլայնության պարբերությունները հաշվելու մեջ:'
   },
   string_search: { 
     id: 'string_search', title: 'Տեքստի Որոնում', icon: '🔍', desc: 'KMP vs Պարզ որոնում', inputs: ['n'], chartType: 'area', colors: { opt: '#8b5cf6', slow: '#ec4899' }, complexity: { fast: 'O(N+M)', slow: 'O(N×M)' },
+    theory: 'Տեսական ակնարկ: Տեքստի որոնման ալգորիթմները նախատեսված են մեծ ծավալի տեքստում (String) կոնկրետ ենթատող (Substring) գտնելու համար: Այն կիրառվում է որոնողական համակարգերում, տեքստային խմբագրիչներում և ԴՆԹ-ի հաջորդականությունների վերլուծության մեջ: Պարզ որոնումը ստուգում է ամեն մի տառը զրոյից, իսկ օպտիմալ ալգորիթմները (ինչպես օրինակ՝ Կնուտ-Մորիս-Պրատտի կամ KMP մեթոդը) հիշում են նախկինում արված համեմատությունները՝ բացառելով հետընթաց քայլերը և արագացնելով որոնումը:'
   },
   permutations: { 
     id: 'permutations', title: 'Տեղափոխություններ', icon: '🔄', desc: 'P(n) = n!', inputs: ['n'], chartType: 'line', colors: { opt: '#10b981', slow: '#f43f5e' }, complexity: { fast: 'O(n)', slow: 'O(n!)' },
+    theory: 'Տեսական ակնարկ: Կոմբինատորիկայում տեղափոխությունը տրված բազմության տարրերի բոլոր հնարավոր հաջորդական դասավորություններն են, որտեղ կարևոր է տարրերի հերթականությունը: Եթե ունենք N տարբեր տարրեր, ապա դրանց բոլոր հնարավոր տեղափոխությունների քանակը հավասար է N! (N ֆակտորիալ): Այս գաղափարը կիրառվում է գաղտնաբառերի գեներացման, դատահամակարգային վերլուծությունների (brute-force հարձակումների մոդելավորում) և լոգիստիկայում օպտիմալ երթուղիներ որոնելիս:'
   },
   arrangements: { 
     id: 'arrangements', title: 'Կարգավորություններ', icon: '📊', desc: 'Հաջորդականությունը կարևոր է', inputs: ['n', 'k'], chartType: 'area', colors: { opt: '#3b82f6', slow: '#f97316' }, complexity: { fast: 'O(k)', slow: 'O(A(n,k))' },
+    theory: "Տեսական ակնարկ: Ի տարբերություն ամբողջական տեղափոխությունների, կարգավորությունը ցույց է տալիս, թե քանի եղանակով է հնարավոր N տարր պարունակող բազմությունից ընտրել և դասավորել միայն K հատ տարրը: Այստեղ ևս տարրերի հերթականությունը խիստ կարևոր է (օրինակ՝ մրցաշարում 1-ին, 2-րդ և 3-րդ տեղերը զբաղեցնող մասնակիցների հնարավոր տարբերակների քանակը հաշվելիս):"
   },
   rep_combinatorics: { 
     id: 'rep_combinatorics', title: 'Կրկնություններով Կոմբինատորիկա', icon: '🔢', 
     desc: 'Տեղափոխություններ և զուգորդություններ կրկնվող տարրերով', 
     inputs: ['n', 'k'], chartType: 'bar', colors: { opt: '#10b981', slow: '#f43f5e' }, 
-    complexity: { fast: 'O(k)', slow: 'O(n^k)' } 
+    complexity: { fast: 'O(k)', slow: 'O(n^k)' }, 
+    theory: "Տեսական ակնարկ: Դասական զուգորդությունները թույլ են տալիս ընտրել տարրեր՝ առանց դրանց կրկնության: Սակայն իրական կյանքի շատ խնդիրներում (օրինակ՝ բազմակի տեսակի ռեսուրսների պլանավորում, պահեստային հաշվառում) անհրաժեշտ է հաշվել այն խմբերի քանակը, որտեղ միևնույն տարրը կարող է ընտրվել մեկից ավելի անգամներ (ընդ որում՝ ընտրության հերթականությունը կարևոր չէ): Մաթեմատիկայում այս մոդելը հաճախ արտահայտվում է հայտնի «Աստղեր և Ձողիկներ» (Stars and Bars) թեորեմի միջոցով:"
   },
   partitions: { 
     id: 'partitions', title: 'Տրոհումներ', icon: '🍰', 
     desc: 'Թվերի և բազմությունների տրոհում (Partitions)', 
     inputs: ['n', 'k'], chartType: 'line', colors: { opt: '#8b5cf6', slow: '#ec4899' }, 
-    complexity: { fast: 'O(n*k)', slow: 'O(exp(√n))' } 
+    complexity: { fast: 'O(n*k)', slow: 'O(exp(√n))' }, 
+    theory: "Տեսական ակնարկ: Թվի տրոհումը ցույց է տալիս, թե քանի տարբեր եղանակներով է հնարավոր տրված ամբողջ դրական թիվը ներկայացնել ավելի փոքր դրական թվերի գումարի տեսքով (գումարելիների հերթականությունը հաշվի չի առնվում): Օրինակ՝ 4-ը կարող է ներկայացվել որպես 4, 3+1, 2+2, 2+1+1 կամ 1+1+1+1: Սա խորը թվաբանական պրոբլեմ է, որը լայն կիրառություն ունի քվանտային ֆիզիկայում, ցանցային տրաֆիկի բաշխման և ռեսուրսների օպտիմալ բլոկավորման խնդիրներում:"
   },
   derangements: { 
     id: 'derangements', title: 'Անկարգություններ', icon: '💌', 
     desc: 'Derangements (!n) - Խառնված նամակների խնդիրը', 
     inputs: ['n'], chartType: 'area', colors: { opt: '#06b6d4', slow: '#f59e0b' }, 
-    complexity: { fast: 'O(n)', slow: 'O(n!)' } 
+    complexity: { fast: 'O(n)', slow: 'O(n!)' },
+    theory: "Տեսական ակնարկ: Անկարգությունը դասական տեղափոխության հատուկ դեպք է, որի դեպքում բազմության ոչ մի տարր չի մնում իր սկզբնական կամ նախնական դիրքում (չկան ֆիքսված կետեր): Դասական օրինակ է հայտնի «Նամակների խնդիրը». քանի՞ եղանակով կարելի է N հատ նամակները տեղադրել N հատ հասցեագրված ծրարների մեջ այնպես, որ ոչ մի նամակ չհայտնվի իր ճիշտ ծրարում: Այս ալգորիթմն օգտագործվում է տվյալների անանունացման և կրիպտոգրաֆիկ խառնման (shuffling) գործընթացներում:"
   },
   catalan: { 
     id: 'catalan', title: 'Կատալանի Թվեր', icon: '🌳', 
     desc: 'Ճիշտ փակագծեր և բինար ծառերի քանակ', 
     inputs: ['n'], chartType: 'line', colors: { opt: '#3b82f6', slow: '#ef4444' }, 
-    complexity: { fast: 'O(n)', slow: 'O(3^n)' } 
+    complexity: { fast: 'O(n)', slow: 'O(3^n)' }, 
+    theory: "Տեսական ակնարկ: Կատալանի թվերը բնական թվերի հաջորդականություն են, որոնք հանդիպում են մի շարք բարդ կոմբինատորային և երկրաչափական խնդիրներում: Դրանք նկարագրում են ռեկուրսիվ կառույցներ պարունակող մոդելներ, օրինակ՝ ճիշտ փակագծային արտահայտությունների (փակագծերի զույգերի) հնարավոր կոմբինացիաները, բազմանկյունների եռանկյունավորման եղանակները և որոնման բինար ծառերի (Binary Search Trees) հնարավոր կառուցվածքների քանակը:"
   },
 };
 
@@ -114,6 +126,7 @@ function ResourceAllocator({ dark }) {
   const [capacity, setCapacity] = useState(6);
   const [result, setResult] = useState(null);
   const [newItem, setNewItem] = useState({ name: '', weight: '', value: '' });
+  
 
   const optimizeResources = () => {
     const n = items.length;
@@ -281,7 +294,7 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
   const textColor = dark ? '#f1f5f9' : '#1e293b';
   const borderColor = dark ? '#334155' : '#f1f5f9';
   const subtextColor = dark ? '#94a3b8' : '#64748b';
-
+  const [showTheory, setShowTheory] = useState(false);
   useEffect(() => {
     const initial = {};
     algoInfo.inputs.forEach(k => initial[k] = "");
@@ -443,6 +456,40 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
       <div style={{ marginBottom: '30px', textAlign: 'center' }}>
         <h2 style={{ margin: 0, color: textColor, fontSize: '28px' }}>{algoInfo.icon} {algoInfo.title}</h2>
         <p style={{ color: subtextColor, margin: '5px 0 0 0', fontSize: '15px' }}>Անկախ լաբորատոր մոդուլ</p>
+
+        <div style={{ marginTop: '15px', marginBottom: '20px' }}>
+          <button 
+            onClick={() => setShowTheory(!showTheory)}
+            style={{ 
+              background: 'transparent', 
+              border: `1px solid ${algoInfo.colors.opt}`, 
+              color: algoInfo.colors.opt, 
+              padding: '6px 12px', 
+              borderRadius: '6px', 
+              cursor: 'pointer', 
+              fontSize: '13px',
+              fontWeight: 'bold'
+            }}
+          >
+            {showTheory ? 'Թաքցնել տեսական մասը' : 'Կարդալ տեսական մասը'}
+          </button>
+          
+          {showTheory && (
+            <div style={{ 
+              marginTop: '15px', 
+              padding: '15px', 
+              background: dark ? '#1e293b' : '#f8fafc', 
+              borderLeft: `4px solid ${algoInfo.colors.opt}`,
+              borderRadius: '0 8px 8px 0', 
+              fontSize: '14px', 
+              lineHeight: '1.6', 
+              textAlign: 'justify',
+              color: dark ? '#cbd5e1' : '#334155'
+            }}>
+              {algoInfo.theory}
+            </div>
+          )}
+        </div>
       </div>
 
       <div className="algo-panel" style={{ background: panelBg, color: textColor, border: `1px solid ${borderColor}`, textAlign: 'left' }}>
@@ -466,7 +513,7 @@ function AlgorithmPage({ algoInfo, onBack, dark }) {
 
       <div className="grid-container">
         <div className="algo-panel" style={{ background: panelBg, color: textColor, border: `1px solid ${borderColor}` }}>
-          <h3 style={{ borderBottom: `2px solid ${dark ? '#334155' : '#f1f5f9'}`, paddingBottom: '10px', color: dark ? '#38bdf8' : '#1e293b', margin: '0 0 15px 0' }}>📖 Տեսական Մաս</h3>
+          <h3 style={{ borderBottom: `2px solid ${dark ? '#334155' : '#f1f5f9'}`, paddingBottom: '10px', color: dark ? '#38bdf8' : '#1e293b', margin: '0 0 15px 0' }}>📖 Ալգորիթմներ</h3>
           <p style={{ color: subtextColor, margin: '0 0 10px 0' }}><strong style={{color: algoInfo.colors.opt}}>Օպտիմալ:</strong> {algoDetails?.fast_explanation || 'Բեռնվում է...'}</p>
           <code className="code-block" style={dark ? {background: '#0f172a', color: '#38bdf8', border: '1px solid #334155'} : {}}>{algoDetails?.fast_formula}</code>
           <p style={{ marginTop: '15px', color: subtextColor }}><strong style={{color: algoInfo.colors.slow}}>Ոչ օպտիմալ:</strong> {algoDetails?.slow_explanation}</p>

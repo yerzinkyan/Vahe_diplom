@@ -1,10 +1,8 @@
-// Օժանդակ մաթեմատիկական ֆունկցիաներ
 const factorial = (n) => (n <= 1 ? 1 : n * factorial(n - 1));
 const gcd = (a, b) => (!b ? a : gcd(b, a % b));
 const combinations = (n, k) => Math.round(factorial(n) / (factorial(k) * factorial(n - k)));
 const arrangements = (n, k) => Math.round(factorial(n) / factorial(n - k));
 
-// Անկարգությունների (Derangements) հաշվարկման ֆունկցիա (!n)
 const derangementsMemo = (n) => {
   if (n === 0) return 1;
   if (n === 1) return 0;
@@ -17,7 +15,6 @@ const derangementsMemo = (n) => {
   return current;
 };
 
-// Թվի տրոհումների (Partitions) քանակի հաշվարկ
 const partitionCount = (n) => {
   let dp = new Array(n + 1).fill(0);
   dp[0] = 1;
@@ -189,7 +186,6 @@ export const generateRandomChallenge = (algoId) => {
       break;
     }
 
-    // --- ՆՈՐ ԱՎԵԼԱՑՎԱԾ 4 ԱԼԳՈՐԻԹՄՆԵՐԸ ---
 
     case 'derangements': {
       const n = 5;
@@ -216,7 +212,7 @@ export const generateRandomChallenge = (algoId) => {
       challenge = { 
         level: '🟢 Հեշտ', 
         question: `Քանի՞ տարբեր բառ կարելի է ստանալ «ԱՐԱՐԱՏ» բառի տառերի տեղափոխությունից:`, 
-        correctAnswer: 60, // 6! / (3! * 2!)
+        correctAnswer: 60, 
         n: 6 
       };
       break;

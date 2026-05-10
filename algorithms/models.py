@@ -35,7 +35,6 @@ class Problem(models.Model):
         ('Hard', '🔴 Բարդ'),
     ]
     
-    # --- ՆՈՐ ԴԱՇՏ: Ալգորիթմների բաժիններ ---
     TOPIC_CHOICES = [
         ('Կոմբինատորիկա', 'Կոմբինատորիկա'),
         ('Դինամիկ Ծրագրավորում', 'Դինամիկ Ծրագրավորում'),
@@ -46,12 +45,8 @@ class Problem(models.Model):
 
     title = models.CharField(max_length=255, verbose_name="Խնդրի Վերնագիր")
     slug = models.SlugField(unique=True, help_text="Օրինակ՝ combinations")
-    
-    # Ավելացնում ենք բաժինը
     topic = models.CharField(max_length=100, choices=TOPIC_CHOICES, default='Կոմբինատորիկա', verbose_name="Ալգորիթմի Բաժին")
-    
     difficulty = models.CharField(max_length=20, choices=DIFFICULTY_CHOICES, default='Medium')
-    
     description = models.TextField(verbose_name="Խնդրի Պահանջը")
     constraints = models.TextField(verbose_name="Սահմանափակումներ")
     starter_code = models.TextField(verbose_name="Սկզբնական կոդ")

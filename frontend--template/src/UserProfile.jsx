@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import './UserProfile.css'; // ՆՈՐ CSS ՖԱՅԼԻ ՄԻԱՑՈՒՄ
+import './UserProfile.css'; 
 
 export default function UserProfile({ dark, user }) {
   const [stats, setStats] = useState(null);
@@ -62,7 +62,6 @@ export default function UserProfile({ dark, user }) {
   return (
     <div className="fade-in profile-container">
       
-      {/* HEADER: USER INFO */}
       <div className="profile-header">
         <div className="profile-header-left">
           <div className="profile-svg-wrapper">
@@ -187,7 +186,6 @@ export default function UserProfile({ dark, user }) {
         </div>
       </div>
 
-      {/* MODAL FOR CODE VIEWING */}
       {selectedSolution && (
         <div className="modal-overlay">
           <div className="modal-content" style={{ background: panelBg }}>

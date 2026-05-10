@@ -3,7 +3,6 @@ import math
 import tracemalloc 
 import random
 
-# --- ՏԵՔՍՏԻ ՈՐՈՆՄԱՆ ԱԼԳՈՐԻԹՄՆԵՐ ---
 def naive_search(pat, txt, counter):
     M, N = len(pat), len(txt)
     for i in range(N - M + 1):
@@ -112,7 +111,6 @@ def slow_partitions(n, limit, counter):
     return slow_partitions(n, limit - 1, counter) + slow_partitions(n - limit, limit, counter)
 
 
-# --- ՔԱՅԼԵՐԻ ԳԵՆԵՐԱՑՈՒՄ ---
 def get_fib_steps(n):
     steps = ["Start: F(0)=0, F(1)=1"]
     a, b = 0, 1
@@ -152,7 +150,6 @@ def get_cat_steps(n):
     return [f"Բանաձև՝ C_n = (1 / (n+1)) * (2n choose n)", f"2n = {2*n}, k = {n}"]
 
 
-# --- ԳԼԽԱՎՈՐ ՀԱՇՎԱՐԿԻ ՖՈՒՆԿՑԻԱ ---
 
 def run_calculation(slug, input_data):
     try:
@@ -304,7 +301,7 @@ def run_calculation(slug, input_data):
             slow_arrangements(n, k, counter)
             res_data["t_slow"] = (time.perf_counter() - t_start) * 1000
 
-    else: # combinations (Default)
+    else: 
         t_start = time.perf_counter()
         res_data["result"] = math.comb(n, k) if hasattr(math, 'comb') else 0
         res_data["t_fast"] = (time.perf_counter() - t_start) * 1000
@@ -320,7 +317,6 @@ def run_calculation(slug, input_data):
             slow_combinations(n, k, counter)
             res_data["t_slow"] = (time.perf_counter() - t_start) * 1000
 
-    # --- ՄԱՔՐԱԳՐՈՒՄԸ 0-ՆԵՐԻ ԴԵՄ (ԱՌԱՆՑ ԱՐՀԵՍՏԱԿԱՆ ԲԱՐՁՐԱՑՄԱՆ) ---
     res_data["t_fast"] = max(res_data["t_fast"], 0.001)
 
     if res_data["t_slow"] is not None:

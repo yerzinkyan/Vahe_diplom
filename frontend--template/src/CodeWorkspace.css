@@ -1,5 +1,3 @@
-/* CodeWorkspace.css */
-
 .cw-container {
   max-width: 1250px;
   margin: 20px auto;
@@ -10,7 +8,6 @@
   position: relative;
 }
 
-/* Header */
 .cw-header {
   display: flex;
   justify-content: space-between;
@@ -71,7 +68,6 @@
   cursor: pointer;
 }
 
-/* User & Auth Buttons */
 .cw-user-badge {
   display: flex;
   align-items: center;
@@ -121,7 +117,6 @@
   cursor: not-allowed;
 }
 
-/* Main Layout */
 .cw-main-area {
   flex: 1;
   display: flex;
@@ -135,7 +130,6 @@
   overflow: hidden;
 }
 
-/* Left Panel (Description & Tests) */
 .cw-left-panel {
   flex: 1.2;
   border-radius: 16px;
@@ -191,7 +185,6 @@
   font-family: monospace;
 }
 
-/* Tests Tab */
 .cw-tests-container {
   display: flex;
   flex-direction: column;
@@ -243,7 +236,6 @@
   margin-top: 50px;
 }
 
-/* Right Panel (Editor & Terminal) */
 .cw-right-panel {
   flex: 1.8;
   display: flex;
@@ -303,7 +295,6 @@
   white-space: pre-wrap;
 }
 
-/* Modal */
 .cw-modal-overlay {
   position: fixed;
   top: 0;

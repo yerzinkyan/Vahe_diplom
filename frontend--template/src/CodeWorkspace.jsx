@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import Editor from '@monaco-editor/react';
 import UserProfile from './UserProfile';
-import './CodeWorkspace.css'; // ՆՈՐ CSS ՖԱՅԼԻ ՄԻԱՑՈՒՄ
+import './CodeWorkspace.css'; 
 
 export default function CodeWorkspace({ dark }) {
   const [problems, setProblems] = useState([]);
@@ -163,7 +163,6 @@ export default function CodeWorkspace({ dark }) {
   return (
     <div className="fade-in cw-container">
       
-      {/* Header */}
       <div className="cw-header" style={{ background: panelBg, border: `1px solid ${borderColor}` }}>
         <div className="cw-header-left">
           <h2 className="cw-title" style={{ color: textColor }}>
@@ -252,7 +251,6 @@ export default function CodeWorkspace({ dark }) {
         {activePage === 'lab' ? (
           <div className="cw-lab-grid">
             
-            {/* Left Panel */}
             <div className="cw-left-panel" style={{ background: panelBg, border: `1px solid ${borderColor}` }}>
               <div className="cw-tabs-header" style={{ background: dark ? '#0f172a' : '#f8fafc', borderBottom: `1px solid ${borderColor}` }}>
                 <button 
@@ -345,7 +343,6 @@ export default function CodeWorkspace({ dark }) {
               </div>
             </div>
 
-            {/* Right Panel */}
             <div className="cw-right-panel">
               <div className="cw-editor-container" style={{ background: panelBg, border: `1px solid ${borderColor}` }}>
                 <div className="cw-panel-top-bar" style={{ borderBottom: `1px solid ${borderColor}`, background: dark ? '#0f172a' : '#f8fafc' }}>
@@ -378,7 +375,6 @@ export default function CodeWorkspace({ dark }) {
         )}
       </div>
 
-      {/* Auth Modal */}
       {showAuthModal && (
         <div className="cw-modal-overlay">
           <div className="cw-modal-content" style={{ background: panelBg, border: `1px solid ${borderColor}` }}>
